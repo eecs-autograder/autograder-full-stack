@@ -1,0 +1,50 @@
+version: '2'
+
+services:
+  nginx:
+    restart: always
+    build: ./nginx/development
+    container_name: ag-dev-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./autograder-web-interface/web_autograder/build/web:/www/static
+
+  django:
+    restart: always
+    build: ./autograder-server
+    container_name: ag-dev-django
+    expose:
+      - "8001"
+    volumes:
+      - ./autograder-server:/usr/src/app
+    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi-dev.ini
+    environment:
+      AG_DB_NAME: 'postgres'
+      AG_REDIS_HOST: 'redis'
+      # Replace this ip address with the ip of your docker machine.
+      # docker-machine ip <machine name (usually 'default')>
+      ALLOWED_HOSTS: '192.168.99.100'
+  
+  postgres:
+    restart: always
+    image: postgres:latest
+    container_name: ag-dev-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+
+  redis:
+    restart: always
+    image: redis:latest
+    container_name: ag-dev-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  web: {}
+  redisdata: {}
+  pgdata: {}

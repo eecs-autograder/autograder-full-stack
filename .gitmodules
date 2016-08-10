@@ -1,0 +1,6 @@
+[submodule "autograder-server"]
+	path = autograder-server
+	url = git@github.com:eecs280staff/autograder-server.git
+[submodule "autograder-web-interface"]
+	path = autograder-web-interface
+	url = git@github.com:eecs280staff/autograder-web-interface.git
