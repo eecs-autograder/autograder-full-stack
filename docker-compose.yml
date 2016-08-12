@@ -21,11 +21,11 @@ services:
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi-dev.ini
     environment:
       AG_DB_NAME: 'postgres'
+      AG_DB_HOST: 'postgres'
+      AG_DB_USER: 'postgres'
+      AG_DB_PASSWORD: 'postgres'
       AG_REDIS_HOST: 'redis'
-      # Replace this ip address with the ip of your docker machine.
-      # docker-machine ip <machine name (usually 'default')>
-      ALLOWED_HOSTS: '192.168.99.100'
-  
+
   postgres:
     restart: always
     image: postgres:latest
