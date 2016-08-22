@@ -8,7 +8,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./autograder-web-interface/web_autograder/build/web:/www/static
+      - ./autograder-web-interface/web_autograder/build_dev/web:/www/static
 
   django:
     restart: always
