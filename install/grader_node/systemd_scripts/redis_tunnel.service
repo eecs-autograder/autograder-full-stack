@@ -1,0 +1,17 @@
+# Put this file in /etc/systemd/system/
+# Then, run:
+# sudo systemctl daemon-reload
+# sudo systemctl enable <name of this file>
+# sudo systemctl start <name of this file> 
+
+[Unit]
+Description=Open an ssh tunnel to the redis port on the autograder server
+[Service]
+Environment="AUTOSSH_GATETIME=0"
+ExecStart=/usr/bin/autossh -M 0 -o "ServerAliveInterval 5" -o "ServerAliveCountMax 2" -L 63333:localhost:6379 jameslp@class7.eecs.umich.edu -N
+Restart=always
+User=jameslp
+
+[Install]
+WantedBy=multi-user.target
+

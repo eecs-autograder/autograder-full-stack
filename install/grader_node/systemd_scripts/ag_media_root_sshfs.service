@@ -1,0 +1,19 @@
+# Put this file in /etc/systemd/system/
+# Then, run:
+# sudo systemctl daemon-reload
+# sudo systemctl enable <name of this file>
+# sudo systemctl start <name of this file> 
+
+[Unit]
+Description=Mount the media_root of the autograder server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/sshfs -o reconnect jameslp@class7.eecs.umich.edu:media_root /home/jameslp/media_root
+Restart=always
+User=jameslp
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
+
