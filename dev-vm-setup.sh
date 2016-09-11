@@ -29,7 +29,9 @@ wget https://storage.googleapis.com/dart-archive/channels/stable/release/latest/
 sudo dpkg -i dart_1.18.1-1_amd64.deb
 sudo apt-get install -y -f
 
-echo "\nexport PATH=\"/usr/lib/dart/bin/:$PATH\"\n" >> $HOME/.bashrc
+echo "export PATH=\"/usr/lib/dart/bin/:$PATH\"" >> $HOME/.bashrc
+
+sudo apt-get install openssh-server
 
 # The Chromium desktop file should go in ~/.local/share/applications (or just use alacarte)
 # Build the docker setup with `docker-compose build`
