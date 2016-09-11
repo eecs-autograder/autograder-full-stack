@@ -57,6 +57,14 @@ services:
     volumes:
       - redisdata:/data
 
+  rabbitmq:
+    restart: always
+    image: rabbitmq:latest
+    hostname: rabbit
+    ports:
+      - "localhost:5672:5672"
+      - "localhost:15672:15672"
+
 volumes:
   redisdata: {}
   pgdata: {}
