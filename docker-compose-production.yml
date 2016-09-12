@@ -38,6 +38,28 @@ services:
       AG_REDIS_HOST: 'redis'
       AG_REDIS_PORT: '6379'
 
+  celerybeat:
+    restart: always
+    build: ./autograder-server
+    container_name: ag-celerybeat
+    volumes: 
+      - ./autograder-server:/usr/src/app
+    command: /usr/local/bin/celery beat -A autograder -l info
+    environment:
+      IS_CELERYBEAT: 'true'
+      AG_CELERY_BROKER_URL: 'amqp://rabbitmq:5672//'
+
+      MEDIA_ROOT: /usr/src/media_root
+
+      AG_DB_NAME: 'postgres'
+      AG_DB_USER: 'postgres'
+      AG_DB_PASSWORD: 'jmkdj48fufuvjrk4kl4ldeoc0fktnrndhsuswkil3ldpdff0rfirjkrmjfi' # UPDATE THIS
+      AG_DB_HOST: 'postgres'
+      AG_DB_PORT: '5432'
+
+      AG_REDIS_HOST: 'redis'
+      AG_REDIS_PORT: '6379'
+
 
   postgres:
     restart: always
