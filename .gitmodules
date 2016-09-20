@@ -4,3 +4,6 @@
 [submodule "autograder-web-interface"]
 	path = autograder-web-interface
 	url = ../autograder-web-interface.git
+[submodule "ag-web-typescript"]
+	path = ag-web-typescript
+	url = git@github.com:eecs280staff/ag-web-typescript.git
