@@ -1,0 +1,45 @@
+version: '2'
+
+services:
+  nginx:
+    restart: always
+    build: ./nginx/development
+    container_name: ag-dev-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./ag-web-typescript:/www/static
+
+  django:
+    extends:
+      file: docker-compose.yml
+      service: django
+    container_name: ag-dev-django
+    expose:
+      - "8001"
+    environment:
+      DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
+      ALLOWED_HOSTS: '*'
+
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+    container_name: ag-dev-postgres
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+    container_name: ag-dev-redis
+
+  rabbitmq:
+    extends:
+      file: docker-compose.yml
+      service: rabbitmq
+
+
+volumes:
+  web: {}
+  redisdata: {}
+  pgdata: {}
