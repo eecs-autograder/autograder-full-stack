@@ -35,6 +35,9 @@ services:
       AG_REDIS_HOST: 'redis'
       AG_REDIS_PORT: '6379'
 
+      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
+      AG_DEFERRED_CHECKER_INTERVAL: '60'
+
   postgres:
     restart: always
     image: postgres:latest
@@ -63,6 +66,12 @@ services:
     hostname: rabbit
     ports:
       - "127.0.0.1:5672:5672"
+
+  celerybeat:
+    extends:
+      service: django
+    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q background_tasks -n background_tasks@%h
+
 
 volumes:
   redisdata: {}

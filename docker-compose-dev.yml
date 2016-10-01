@@ -41,6 +41,14 @@ services:
       file: docker-compose.yml
       service: rabbitmq
 
+  celerybeat:
+    extends:
+      file: docker-compose.yml
+      service: celerybeat
+
+    environment:
+      AG_DEFERRED_CHECKER_INTERVAL: '5'
+
 
 volumes:
   redisdata: {}
