@@ -20,6 +20,9 @@ services:
     environment:
       DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
       ALLOWED_HOSTS: '*'
+      # Set to 'false' to disable real authentication. Any other string value
+      # will enable real authentication
+      USE_REAL_AUTH: 'true'
 
   postgres:
     extends:
@@ -40,6 +43,5 @@ services:
 
 
 volumes:
-  web: {}
   redisdata: {}
   pgdata: {}
