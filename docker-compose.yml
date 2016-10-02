@@ -71,6 +71,7 @@ services:
     extends:
       service: django
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q background_tasks -n background_tasks@%h
+    container_name: ag-celerybeat
 
 
 volumes:

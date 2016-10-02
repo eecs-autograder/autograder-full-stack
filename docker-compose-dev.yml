@@ -40,11 +40,14 @@ services:
     extends:
       file: docker-compose.yml
       service: rabbitmq
+    container_name: ag-dev-rabbitmq
 
   celerybeat:
     extends:
       file: docker-compose.yml
       service: celerybeat
+
+    container_name: ag-dev-celerybeat
 
     environment:
       AG_DEFERRED_CHECKER_INTERVAL: '5'
