@@ -23,12 +23,15 @@ services:
       # Set to 'false' to disable real authentication. Any other string value
       # will enable real authentication
       USE_REAL_AUTH: 'true'
+      AG_DB_PASSWORD: 'postgres'
 
   postgres:
     extends:
       file: docker-compose.yml
       service: postgres
     container_name: ag-dev-postgres
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
 
   redis:
     extends:
@@ -46,11 +49,11 @@ services:
     extends:
       file: docker-compose.yml
       service: celerybeat
-
     container_name: ag-dev-celerybeat
 
     environment:
       AG_DEFERRED_CHECKER_INTERVAL: '5'
+      AG_DB_PASSWORD: 'postgres'
 
 
 volumes:
