@@ -17,9 +17,11 @@ services:
     container_name: ag-dev-django
     expose:
       - "8001"
+    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini --python-autoreload 1
     environment:
       DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
       ALLOWED_HOSTS: '*'
+      OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
       # Set to 'false' to disable real authentication. Any other string value
       # will enable real authentication
       USE_REAL_AUTH: 'true'
@@ -54,6 +56,7 @@ services:
     environment:
       AG_DEFERRED_CHECKER_INTERVAL: '5'
       AG_DB_PASSWORD: 'postgres'
+      OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
 
 
 volumes:

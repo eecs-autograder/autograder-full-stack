@@ -26,6 +26,11 @@ services:
       MEDIA_ROOT: /usr/src/app/media_root
       ALLOWED_HOSTS: '' # UPDATE THIS
 
+      # Remember to add this file (download from google dev console) and update path here.
+      # The file should be put somewhere inside the autograder-server directory,
+      # preferrably in autograder-server/autograder/settings
+      OAUTH2_SECRETS_FILENAME: '' # UPDATE THIS
+
       AG_DB_NAME: 'postgres'
       AG_DB_USER: 'postgres'
       AG_DB_PASSWORD: 'jmkdj48fufuvjrk4kl4ldeoc0fktnrndhsuswkil3ldpdff0rfirjkrmjfi' # UPDATE THIS
