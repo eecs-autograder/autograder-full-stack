@@ -4,3 +4,7 @@ logfile
 old_dockerfile
 sftp-config.json
 urls.txt
+.sudo_as_admin_successful
+.vagrant/
+.bash_history
+.cache
