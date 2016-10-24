@@ -9,8 +9,6 @@ Vagrant.configure(2) do |config|
   # local browser while running the dev environment on your VM
   config.vm.network "forwarded_port", guest: 80, host: 8888
 
-  config.vm.synced_folder "./", "/home/vagrant"
-
   # Name your virtual machine
   config.vm.provider "virtualbox" do |v|
     v.name = "AG Dev Box"
