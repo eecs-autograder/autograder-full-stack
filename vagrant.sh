@@ -3,8 +3,6 @@
 # Update apt first (system package installer)
 sudo apt update
 
-echo "\n\ncd /vagrant" >> /home/vagrant/.bashrc
-
 # install Docker
 sudo apt install -y apt-transport-https ca-certificates
 
