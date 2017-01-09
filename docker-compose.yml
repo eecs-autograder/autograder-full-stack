@@ -2,7 +2,7 @@ version: '2'
 
 services:
   nginx:
-    restart: always
+    restart: unless-stopped
     build: ./nginx/production
     container_name: ag-nginx
     ports:
@@ -13,7 +13,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
 
   django:
-    restart: always
+    restart: unless-stopped
     build: ./autograder-server
     container_name: ag-django
     expose:
@@ -41,10 +41,11 @@ services:
       AG_REDIS_PORT: '6379'
 
       AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_DEFERRED_CHECKER_INTERVAL: '60'
+      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
 
+## Comment this out if you're using a separate database server
   postgres:
-    restart: always
+    restart: unless-stopped
     image: postgres:latest
     container_name: ag-postgres
     ports:
@@ -56,7 +57,7 @@ services:
 
   # http://redis.io/topics/security
   redis:
-    restart: always
+    restart: unless-stopped
     image: redis:latest
     container_name: ag-redis
     ports:
@@ -65,7 +66,7 @@ services:
       - redisdata:/data
 
   rabbitmq:
-    restart: always
+    restart: unless-stopped
     image: rabbitmq:latest
     container_name: ag-rabbitmq
     hostname: rabbit
