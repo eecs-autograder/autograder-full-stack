@@ -79,22 +79,6 @@ services:
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q background_tasks -n background_tasks@%h
     container_name: ag-celerybeat
 
-  grade_submissions_worker:
-    extends:
-      service: django
-    # UPDATE THE NUMBER AFTER -c (number of concurrent threads)
-    command: /usr/local/bin/celery worker -c 1 -A autograder -l info -Q submissions -n submissions@%h
-    container_name: ag-grade-submissions-worker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
-  grade_deferred_worker:
-    extends:
-      service: grade_submissions_worker
-    # UPDATE THE NUMBER AFTER -c (number of concurrent threads)
-    command: /usr/local/bin/celery worker -c 1 -A autograder -l info -Q deferred -n deferred@%h
-    container_name: ag-grade-deferred-worker
-
 volumes:
   redisdata: {}
   pgdata: {}
