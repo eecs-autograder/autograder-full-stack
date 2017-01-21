@@ -8,7 +8,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./ag-web-typescript:/www/static
+      - ./ag-web-typescript/dist:/www/static
 
   django:
     extends:
@@ -23,7 +23,10 @@ services:
       ALLOWED_HOSTS: '*'
       OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
       # Set to 'false' to disable real authentication. Any other string value
-      # will enable real authentication
+      # will enable real authentication.
+      # Then, using a browser plugin such as EditThisCookie, set the
+      # cookie "username=<email>" to set which user you want to
+      # authenticate as.
       USE_REAL_AUTH: 'true'
       AG_DB_PASSWORD: 'postgres'
 
