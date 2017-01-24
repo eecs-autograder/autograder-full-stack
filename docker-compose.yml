@@ -46,7 +46,7 @@ services:
 ## Comment this out if you're using a separate database server
   postgres:
     restart: unless-stopped
-    image: postgres:latest
+    image: postgres:9.5
     container_name: ag-postgres
     ports:
       - "127.0.0.1:5432:5432"
