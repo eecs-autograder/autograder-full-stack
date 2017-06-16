@@ -9,8 +9,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./ag-web-typescript/dist:/www/static
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./ag-web-typescript/dist:/www/typescript
+    #   - ./autograder-server/static:/www/rest_framework
 
   django:
     restart: unless-stopped
@@ -46,7 +46,7 @@ services:
 ## Comment this out if you're using a separate database server
   postgres:
     restart: unless-stopped
-    image: postgres:9.5
+    image: postgres:latest
     container_name: ag-postgres
     ports:
       - "127.0.0.1:5432:5432"
