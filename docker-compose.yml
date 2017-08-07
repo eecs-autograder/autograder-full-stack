@@ -10,7 +10,6 @@ services:
       - "443:443"
     volumes:
       - ./ag-web-typescript/dist:/www/typescript
-    #   - ./autograder-server/static:/www/rest_framework
 
   django:
     restart: unless-stopped
@@ -73,11 +72,20 @@ services:
     ports:
       - "127.0.0.1:5672:5672"
 
+  celery_small_tasks:
+    extends:
+      service: django
+    command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
+    container_name: ag-celery-small-tasks
+
   celerybeat:
     extends:
       service: django
-    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q background_tasks -n background_tasks@%h
+    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
     container_name: ag-celerybeat
+
+    # environment:
+        # AG_SUBMISSION_LISTENER_INTERVAL:
 
 volumes:
   redisdata: {}

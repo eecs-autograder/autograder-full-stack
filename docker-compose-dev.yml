@@ -9,10 +9,8 @@ services:
       - "80:80"
     volumes:
       - ./ag-web-typescript/dist:/www/typescript
-    #   - ./autograder-server/static:/www/rest_framework
 
     network_mode: 'host'
-
 
   django:
     extends:
@@ -69,7 +67,25 @@ services:
     container_name: ag-dev-celerybeat
 
     environment:
-      AG_DEFERRED_CHECKER_INTERVAL: '5'
+      AG_DB_HOST: 'localhost'
+      AG_REDIS_HOST: 'localhost'
+      AG_DB_PASSWORD: 'postgres'
+      OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
+
+      AG_CELERY_BROKER_URL: 'amqp://guest@localhost:5672//'
+      AG_CELERY_RESULTS_BACKEND_URL: 'redis://localhost:6379/0'
+
+    #   AG_SUBMISSION_LISTENER_INTERVAL: 60
+
+    network_mode: 'host'
+
+  celery_small_tasks:
+    extends:
+      file: docker-compose.yml
+      service: celery_small_tasks
+    container_name: ag-dev-celery-small-tasks
+
+    environment:
       AG_DB_HOST: 'localhost'
       AG_REDIS_HOST: 'localhost'
       AG_DB_PASSWORD: 'postgres'
