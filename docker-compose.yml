@@ -2,6 +2,7 @@ version: '2'
 
 services:
   nginx:
+    image: 127.0.0.1:5000/nginx
     restart: unless-stopped
     build: ./nginx/production
     container_name: ag-nginx
@@ -13,6 +14,7 @@ services:
       - /etc/ssl:/etc/ssl
 
   django:
+    image: 127.0.0.1:5000/django
     restart: unless-stopped
     build: ./autograder-server
     container_name: ag-django
@@ -46,6 +48,7 @@ services:
 
 
   postgres:
+    image: 127.0.0.1:5000/postgres
     restart: unless-stopped
     image: postgres:latest
     container_name: ag-postgres
@@ -58,6 +61,7 @@ services:
 
   # http://redis.io/topics/security
   redis:
+    image: 127.0.0.1:5000/redis
     restart: unless-stopped
     image: redis:latest
     container_name: ag-redis
@@ -67,6 +71,7 @@ services:
       - redisdata:/data
 
   rabbitmq:
+    image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
     image: rabbitmq:latest
     container_name: ag-rabbitmq
@@ -75,12 +80,14 @@ services:
       - "127.0.0.1:5672:5672"
 
   celery_small_tasks:
+    image: 127.0.0.1:5000/celery_small_tasks
     extends:
       service: django
     command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
     container_name: ag-celery-small-tasks
 
   celerybeat:
+    image: 127.0.0.1:5000/celerybeat
     extends:
       service: django
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
@@ -96,6 +103,7 @@ services:
     build:
       dockerfile: Dockerfile-grader
       context: ./autograder-server
+    image: 127.0.0.1:5000/grader
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
