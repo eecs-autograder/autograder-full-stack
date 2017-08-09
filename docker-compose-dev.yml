@@ -2,13 +2,14 @@ version: '2'
 
 services:
   nginx:
-    restart: always
-    build: ./nginx/development
+    image: nginx:latest
+    restart: unless-stopped
     container_name: ag-dev-nginx
     ports:
       - "80:80"
     volumes:
       - ./ag-web-typescript/dist:/www/typescript
+      - ./nginx/development/conf.d:/etc/nginx/conf.d
 
   django:
     extends:
@@ -16,27 +17,8 @@ services:
       service: django
     container_name: ag-dev-django
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini --python-autoreload 1
-
-    environment:
-      DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
-      ALLOWED_HOSTS: '*'
-      OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
-        # Set to false to disable real authentication. Any other string value
-        # will enable real authentication.
-        # Then, using a browser plugin such as EditThisCookie, set the
-      # cookie "username: '<email>" to set which user you want to'
-        # authenticate as.
-      USE_REAL_AUTH: 'false'
-      AG_DB_PASSWORD: 'postgres'
-
-      AG_DB_HOST: 'postgres'
-      AG_REDIS_HOST: 'redis'
-
-      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
-
-#    env_file:
-#      - ./autograder-server/_dev.env
+    env_file:
+      - ./autograder-server/_dev.env
 
   postgres:
     extends:
@@ -63,19 +45,9 @@ services:
       file: docker-compose.yml
       service: celerybeat
     container_name: ag-dev-celerybeat
-
-    environment:
-      DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
-      AG_DB_PASSWORD: 'postgres'
-
-      AG_DB_HOST: 'postgres'
-      AG_REDIS_HOST: 'redis'
-
-      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
-#    env_file:
-#      - ./autograder-server/_dev.env
-
+    env_file:
+      - ./autograder-server/_dev.env
+#    environment:
     #   AG_SUBMISSION_LISTENER_INTERVAL: 60
 
   celery_small_tasks:
@@ -83,47 +55,18 @@ services:
       file: docker-compose.yml
       service: celery_small_tasks
     container_name: ag-dev-celery-small-tasks
-
-    environment:
-      DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
-      AG_DB_PASSWORD: 'postgres'
-
-      AG_DB_HOST: 'postgres'
-      AG_REDIS_HOST: 'redis'
-
-      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
-#    env_file:
-#      - ./autograder-server/_dev.env
+    env_file:
+      - ./autograder-server/_dev.env
 
   grader:
     extends:
       file: docker-compose.yml
       service: grader
-
     container_name: ag-dev-grader
-
+    env_file:
+      - ./autograder-server/_dev.env
     environment:
-      DJANGO_SETTINGS_MODULE: 'autograder.settings.development'
-#      ALLOWED_HOSTS: '*'
-#      OAUTH2_SECRETS_FILENAME: 'dev_oauth2_secrets.json'
-        # Set to false to disable real authentication. Any other string value
-        # will enable real authentication.
-        # Then, using a browser plugin such as EditThisCookie, set the
-      # cookie "username: '<email>" to set which user you want to'
-        # authenticate as.
-#      USE_REAL_AUTH: 'false'
-      AG_DB_PASSWORD: 'postgres'
-
-      AG_DB_HOST: 'postgres'
-      AG_REDIS_HOST: 'redis'
-
-      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
-
-#    env_file:
-#      - ./autograder-server/_dev.env
-
+      AG_REDIS_HOST: 'redis'  # In dev, grader nodes can share the redis server
 
 volumes:
   redisdata: {}

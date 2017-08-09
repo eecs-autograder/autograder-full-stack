@@ -2,9 +2,8 @@ version: '2'
 
 services:
   nginx:
-    image: 127.0.0.1:5000/nginx
+    image: nginx:latest
     restart: unless-stopped
-    build: ./nginx/production
     container_name: ag-nginx
     ports:
       - "80:80"
@@ -12,6 +11,7 @@ services:
     volumes:
       - ./ag-web-typescript/dist:/www/typescript
       - /etc/ssl:/etc/ssl
+      - ./nginx/production/conf.d:/etc/nginx/conf.d
 
   django:
     image: 127.0.0.1:5000/django
@@ -23,29 +23,8 @@ services:
     volumes:
       - ./autograder-server:/usr/src/app
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
-#    env_file: ./autograder-server/_env_prod
-    environment:
-      DJANGO_SETTINGS_MODULE: 'autograder.settings.production'
-      MEDIA_ROOT: /usr/src/app/media_root
-      ALLOWED_HOSTS: 'autograder.io' # UPDATE THIS
-
-      # Remember to add this file (download from google dev console) and update path here.
-      # The file should be put somewhere inside the autograder-server directory,
-      # preferrably in autograder-server/autograder/settings
-      OAUTH2_SECRETS_FILENAME: 'oauth2_secrets.json' # UPDATE THIS
-
-      AG_DB_NAME: 'postgres'
-      AG_DB_USER: 'postgres'
-      AG_DB_PASSWORD: 'postgres' # UPDATE THIS
-      AG_DB_HOST: 'postgres'
-      AG_DB_PORT: '5432'
-
-      AG_REDIS_HOST: 'redis'
-      AG_REDIS_PORT: '6379'
-
-      AG_CELERY_BROKER_URL: 'amqp://guest@rabbitmq:5672//'
-      AG_CELERY_RESULTS_BACKEND_URL: 'redis://redis:6379/0'
-
+    env_file:
+      - ./autograder-server/_prod.env
 
   postgres:
     image: 127.0.0.1:5000/postgres
@@ -85,6 +64,9 @@ services:
       service: django
     command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
     container_name: ag-celery-small-tasks
+    env_file:
+      - ./autograder-server/_prod.env
+
 
   celerybeat:
     image: 127.0.0.1:5000/celerybeat
@@ -92,13 +74,13 @@ services:
       service: django
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
     container_name: ag-celerybeat
+    env_file:
+      - ./autograder-server/_prod.env
 
     # environment:
         # AG_SUBMISSION_LISTENER_INTERVAL:
 
   grader:
-    extends:
-      service: django
     container_name: ag-grader
     build:
       dockerfile: Dockerfile-grader
@@ -106,10 +88,13 @@ services:
     image: 127.0.0.1:5000/grader
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server:/usr/src/app
+    env_file:
+      - ./autograder-server/_prod.env
+    environment:
+      AG_REDIS_HOST: 'localhost'  # grader nodes should all have their own redis server
 
     command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
-
-
 
 volumes:
   redisdata: {}
