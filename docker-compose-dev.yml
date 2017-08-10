@@ -68,6 +68,16 @@ services:
     environment:
       AG_REDIS_HOST: 'redis'  # In dev, grader nodes can share the redis server
 
+  deferred_grader:
+    extends:
+      file: docker-compose.yml
+      service: deferred_grader
+    container_name: ag-dev-deferred-grader
+    env_file:
+      - ./autograder-server/_dev.env
+    environment:
+      AG_REDIS_HOST: 'redis'  # In dev, grader nodes can share the redis server
+
 volumes:
   redisdata: {}
   pgdata: {}
