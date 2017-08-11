@@ -2,7 +2,7 @@ version: '2'
 
 services:
   nginx:
-    image: nginx:latest
+    build: ./nginx/production
     restart: unless-stopped
     container_name: ag-nginx
     ports:
