@@ -1,10 +1,10 @@
-version: '2'
+version: '3'
 
 services:
   nginx:
+    container_name: ag-nginx
     build: ./nginx/production
     restart: unless-stopped
-    container_name: ag-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -14,10 +14,10 @@ services:
       - ./nginx/production/conf.d:/etc/nginx/conf.d
 
   django:
+    container_name: ag-django
     image: 127.0.0.1:5000/django
     restart: unless-stopped
     build: ./autograder-server
-    container_name: ag-django
     expose:
       - "8001"
     volumes:
@@ -27,12 +27,12 @@ services:
       - ./autograder-server/_prod.env
 
   postgres:
+    container_name: ag-postgres
     image: 127.0.0.1:5000/postgres
     restart: unless-stopped
-    image: postgres:latest
-    container_name: ag-postgres
-    ports:
-      - "127.0.0.1:5432:5432"
+    image: postgres:9.5
+    expose:
+      - "5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/
     environment:
@@ -40,37 +40,41 @@ services:
 
   # http://redis.io/topics/security
   redis:
+    container_name: ag-redis
     image: 127.0.0.1:5000/redis
     restart: unless-stopped
     image: redis:latest
-    container_name: ag-redis
-    ports:
-      - "127.0.0.1:6379:6379"
+    expose:
+      - "6379"
     volumes:
       - redisdata:/data
 
   rabbitmq:
+    container_name: ag-rabbitmq
     image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
     image: rabbitmq:latest
-    container_name: ag-rabbitmq
     hostname: rabbit
-    ports:
-      - "127.0.0.1:5672:5672"
+    expose:
+      - "5672"
 
   celery_small_tasks:
-    image: 127.0.0.1:5000/celery_small_tasks
-    extends:
-      service: django
-    command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
     container_name: ag-celery-small-tasks
+    image: 127.0.0.1:5000/celery_small_tasks
+    restart: unless-stopped
+    build: ./autograder-server
+    command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
+    env_file:
+      - ./autograder-server/_prod.env
 
   celerybeat:
-    image: 127.0.0.1:5000/celerybeat
-    extends:
-      service: django
-    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
     container_name: ag-celerybeat
+    image: 127.0.0.1:5000/celerybeat
+    restart: unless-stopped
+    build: ./autograder-server
+    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
+    env_file:
+      - ./autograder-server/_prod.env
 
     # environment:
         # AG_SUBMISSION_LISTENER_INTERVAL:
@@ -86,16 +90,36 @@ services:
       - ./autograder-server:/usr/src/app
     env_file:
       - ./autograder-server/_prod.env
-    environment:
-      AG_REDIS_HOST: 'localhost'  # grader nodes should all have their own redis server
 
     command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
 
+#    deploy:
+#      mode: global
+#      placement:
+#        constraints:
+#          - node.host != <nodes>
+# https://docs.docker.com/compose/compose-file/#mode
+
   deferred_grader:
     container_name: ag-deferred-grader
-    extends:
-      service: grader
+    build:
+      dockerfile: Dockerfile-grader
+      context: ./autograder-server
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server:/usr/src/app
+    env_file:
+      - ./autograder-server/_prod.env
+
     command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
+
+#    deploy:
+#      mode: replicated
+# FIXME: num replicas
+#      placement:
+#        constraints:
+#          - node.host != <nodes>
 
 volumes:
   redisdata: {}

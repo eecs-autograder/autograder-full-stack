@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   nginx:
@@ -12,71 +12,97 @@ services:
       - ./nginx/development/conf.d:/etc/nginx/conf.d
 
   django:
-    extends:
-      file: docker-compose.yml
-      service: django
+    restart: unless-stopped
+    build: ./autograder-server
     container_name: ag-dev-django
+    expose:
+      - "8001"
+    volumes:
+      - ./autograder-server:/usr/src/app
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini --python-autoreload 1
     env_file:
       - ./autograder-server/_dev.env
 
   postgres:
-    extends:
-      file: docker-compose.yml
-      service: postgres
+    restart: unless-stopped
+    image: postgres:latest
     container_name: ag-dev-postgres
+    expose:
+      - "5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
     environment:
       POSTGRES_PASSWORD: 'postgres'
 
   redis:
-    extends:
-      file: docker-compose.yml
-      service: redis
+    restart: unless-stopped
+    image: redis:latest
     container_name: ag-dev-redis
+    expose:
+      - "6379"
+    volumes:
+      - redisdata:/data
 
   rabbitmq:
-    extends:
-      file: docker-compose.yml
-      service: rabbitmq
+    image: 127.0.0.1:5000/rabbitmq
+    restart: unless-stopped
+    image: rabbitmq:latest
     container_name: ag-dev-rabbitmq
+    hostname: rabbit
+    expose:
+      - "5672"
 
-  celerybeat:
-    extends:
-      file: docker-compose.yml
-      service: celerybeat
-    container_name: ag-dev-celerybeat
+  celery_small_tasks:
+    restart: unless-stopped
+    build: ./autograder-server
+    container_name: ag-dev-celery-small-tasks
+    volumes:
+      - ./autograder-server:/usr/src/app
+    command: /usr/local/bin/celery worker -c 1 -A autograder -l info -Q small_tasks -n small_tasks@%h
     env_file:
       - ./autograder-server/_dev.env
+
+  celerybeat:
+    container_name: ag-dev-celerybeat
+    restart: unless-stopped
+    build: ./autograder-server
+    env_file:
+      - ./autograder-server/_dev.env
+    volumes:
+      - ./autograder-server:/usr/src/app
+    command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
+
 #    environment:
     #   AG_SUBMISSION_LISTENER_INTERVAL: 60
 
-  celery_small_tasks:
-    extends:
-      file: docker-compose.yml
-      service: celery_small_tasks
-    container_name: ag-dev-celery-small-tasks
+  grader:
+    container_name: ag-dev-grader
+    build:
+      dockerfile: Dockerfile-grader
+      context: ./autograder-server
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server:/usr/src/app
+
     env_file:
       - ./autograder-server/_dev.env
 
-  grader:
-    extends:
-      file: docker-compose.yml
-      service: grader
-    container_name: ag-dev-grader
-    env_file:
-      - ./autograder-server/_dev.env
-    environment:
-      AG_REDIS_HOST: 'redis'  # In dev, grader nodes can share the redis server
+    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
 
   deferred_grader:
-    extends:
-      file: docker-compose.yml
-      service: deferred_grader
     container_name: ag-dev-deferred-grader
+    build:
+      dockerfile: Dockerfile-grader
+      context: ./autograder-server
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server:/usr/src/app
     env_file:
       - ./autograder-server/_dev.env
-    environment:
-      AG_REDIS_HOST: 'redis'  # In dev, grader nodes can share the redis server
+
+    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
 
 volumes:
   redisdata: {}
