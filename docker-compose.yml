@@ -63,6 +63,8 @@ services:
     image: 127.0.0.1:5000/celery_small_tasks
     restart: unless-stopped
     build: ./autograder-server
+    volumes:
+      - ./autograder-server:/usr/src/app
     command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
     env_file:
       - ./autograder-server/_prod.env
@@ -72,6 +74,8 @@ services:
     image: 127.0.0.1:5000/celerybeat
     restart: unless-stopped
     build: ./autograder-server
+    volumes:
+      - ./autograder-server:/usr/src/app
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
     env_file:
       - ./autograder-server/_prod.env
