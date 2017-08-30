@@ -62,6 +62,16 @@ services:
     env_file:
       - ./autograder-server/_dev.env
 
+  celery_project_downloads:
+    restart: unless-stopped
+    build: ./autograder-server
+    container_name: ag-dev-celery-project-downloads
+    volumes:
+      - ./autograder-server:/usr/src/app
+    command: /usr/local/bin/celery worker -c 1 -A autograder -l info -Q project_downloads -n project_downloads@%h
+    env_file:
+      - ./autograder-server/_dev.env
+
   celerybeat:
     container_name: ag-dev-celerybeat
     restart: unless-stopped
@@ -72,8 +82,8 @@ services:
       - ./autograder-server:/usr/src/app
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
 
-#    environment:
-    #   AG_SUBMISSION_LISTENER_INTERVAL: 60
+   # environment:
+   #  AG_SUBMISSION_LISTENER_INTERVAL: 5
 
   grader:
     container_name: ag-dev-grader
