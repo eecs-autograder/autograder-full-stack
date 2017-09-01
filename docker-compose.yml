@@ -122,6 +122,12 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   celerybeat:
     container_name: ag-celerybeat
     image: 127.0.0.1:5000/celerybeat
@@ -176,7 +182,7 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 4
 
     deploy:
       replicas: 1
