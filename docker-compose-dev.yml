@@ -13,7 +13,9 @@ services:
 
   django:
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-dev
     container_name: ag-dev-django
     expose:
       - "8001"
@@ -54,7 +56,9 @@ services:
 
   celery_small_tasks:
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-dev
     container_name: ag-dev-celery-small-tasks
     volumes:
       - ./autograder-server:/usr/src/app
@@ -64,7 +68,9 @@ services:
 
   celery_project_downloads:
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-dev
     container_name: ag-dev-celery-project-downloads
     volumes:
       - ./autograder-server:/usr/src/app
@@ -75,7 +81,9 @@ services:
   celerybeat:
     container_name: ag-dev-celerybeat
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-dev
     env_file:
       - ./autograder-server/_dev.env
     volumes:
@@ -88,7 +96,7 @@ services:
   grader:
     container_name: ag-dev-grader
     build:
-      dockerfile: Dockerfile-grader
+      dockerfile: Dockerfile-grader-dev
       context: ./autograder-server
 
     volumes:
@@ -103,7 +111,7 @@ services:
   deferred_grader:
     container_name: ag-dev-deferred-grader
     build:
-      dockerfile: Dockerfile-grader
+      dockerfile: Dockerfile-grader-dev
       context: ./autograder-server
 
     volumes:

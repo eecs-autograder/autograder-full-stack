@@ -3,6 +3,7 @@ version: '3'
 services:
   nginx:
     container_name: ag-nginx
+    image: 127.0.0.1:5000/nginx
     build: ./nginx/production
     restart: unless-stopped
     ports:
@@ -13,18 +14,32 @@ services:
       - /etc/ssl:/etc/ssl
       - ./nginx/production/conf.d:/etc/nginx/conf.d
 
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   django:
     container_name: ag-django
     image: 127.0.0.1:5000/django
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-prod
     expose:
       - "8001"
     volumes:
-      - ./autograder-server:/usr/src/app
+      - ./autograder-server/media_root:/usr/src/app/media_root
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
     env_file:
       - ./autograder-server/_prod.env
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
 
   postgres:
     container_name: ag-postgres
@@ -38,7 +53,12 @@ services:
     environment:
       POSTGRES_PASSWORD: 'postgres' # UPDATE THIS
 
-  # http://redis.io/topics/security
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   redis:
     container_name: ag-redis
     image: 127.0.0.1:5000/redis
@@ -49,6 +69,12 @@ services:
     volumes:
       - redisdata:/data
 
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   rabbitmq:
     container_name: ag-rabbitmq
     image: 127.0.0.1:5000/rabbitmq
@@ -58,14 +84,41 @@ services:
     expose:
       - "5672"
 
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   celery_small_tasks:
     container_name: ag-celery-small-tasks
     image: 127.0.0.1:5000/celery_small_tasks
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-prod
+    volumes:
+      - ./autograder-server/media_root:/usr/src/app/media_root
+    command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
+    env_file:
+      - ./autograder-server/_prod.env
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
+  celery_project_downloads:
+    container_name: ag-celery-project-downloads
+    image: 127.0.0.1:5000/celery_project_downloads
+    restart: unless-stopped
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-prod
     volumes:
       - ./autograder-server:/usr/src/app
-    command: /usr/local/bin/celery worker -c 4 -A autograder -l info -Q small_tasks -n small_tasks@%h
+    command: /usr/local/bin/celery worker -c 2 -A autograder -l info -Q project_downloads -n project_downloads@%h
     env_file:
       - ./autograder-server/_prod.env
 
@@ -73,57 +126,68 @@ services:
     container_name: ag-celerybeat
     image: 127.0.0.1:5000/celerybeat
     restart: unless-stopped
-    build: ./autograder-server
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-django-prod
     volumes:
-      - ./autograder-server:/usr/src/app
+      - ./autograder-server/media_root:/usr/src/app/media_root
     command: /usr/local/bin/celery worker --beat -c 1 -A autograder -l info -Q periodic_tasks -n periodic_tasks@%h
     env_file:
       - ./autograder-server/_prod.env
 
     # environment:
         # AG_SUBMISSION_LISTENER_INTERVAL:
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
 
   grader:
     container_name: ag-grader
-    build:
-      dockerfile: Dockerfile-grader
-      context: ./autograder-server
     image: 127.0.0.1:5000/grader
+    build:
+      context: ./autograder-server
+      dockerfile: Dockerfile-grader-prod
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server:/usr/src/app
+      - ./autograder-server/media_root:/usr/src/app/media_root
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 4
 
-#    deploy:
-#      mode: global
-#      placement:
-#        constraints:
-#          - node.host != <nodes>
-# https://docs.docker.com/compose/compose-file/#mode
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname != class2
+          - node.hostname != class1
 
   deferred_grader:
     container_name: ag-deferred-grader
+    image: 127.0.0.1:5000/deferred_grader
     build:
-      dockerfile: Dockerfile-grader
       context: ./autograder-server
-
+      dockerfile: Dockerfile-grader-prod
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server:/usr/src/app
+      - ./autograder-server/media_root:/usr/src/app/media_root
     env_file:
       - ./autograder-server/_prod.env
 
     command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
 
-#    deploy:
-#      mode: replicated
-# FIXME: num replicas
-#      placement:
-#        constraints:
-#          - node.host != <nodes>
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class1
+
+networks:
+  default:
+    external:
+      name: ag-swarm-network
 
 volumes:
   redisdata: {}
