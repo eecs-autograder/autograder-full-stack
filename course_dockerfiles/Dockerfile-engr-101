@@ -1,12 +1,3 @@
 FROM jameslp/autograder-sandbox:3.1.0
 
 RUN apt-get update --fix-missing && apt-get install -y octave
-
-RUN apt-get update && apt-get install -y \
-    libpng12-dev libfreetype6-dev \
-    libblas-dev liblapack-dev gfortran build-essential xorg
-
-ENV PATH="/usr/local/MATLAB/R2017a/bin:${PATH}"
-
-# NOTE: You must either mount or copy the matlab directory into
-# the container for it to work.
