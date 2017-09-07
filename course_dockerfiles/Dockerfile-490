@@ -16,3 +16,12 @@ RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true 
 RUN apt-get install -y racket swi-prolog python3.6 gcc-7
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
+RUN apt-get install -y python3.6-dev
+RUN wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py
+RUN python3.6 /tmp/get-pip.py
+RUN python3.6 -m pip install numpy
+
+ENV OPENBLAS_NUM_THREADS 1
+ENV GOTO_NUM_THREADS 1
+ENV OMP_NUM_THREADS 1
