@@ -1,8 +1,18 @@
 FROM jameslp/autograder-sandbox:3.1.0
 
+RUN apt-get update
+RUN apt-get install -y software-properties-common python-software-properties
+
+RUN add-apt-repository ppa:webupd8team/java && apt-get update
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    apt-get install -y oracle-java8-installer
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
 RUN apt-get update --fix-missing && \
-    apt-get install -y python3-wheel python3-setuptools default-jre python3-dev python3-pip
+    apt-get install -y python3-wheel python3-setuptools python3-dev python3-pip python3-venv
 
 COPY requirements-485.txt .
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements-485.txt
+RUN python3 -m venv env
+RUN env/bin/pip install -r requirements-485.txt
+RUN chown -R autograder .
+RUN rm requirements-485.txt
