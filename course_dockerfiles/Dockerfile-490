@@ -25,3 +25,5 @@ RUN python3.6 -m pip install numpy
 ENV OPENBLAS_NUM_THREADS 1
 ENV GOTO_NUM_THREADS 1
 ENV OMP_NUM_THREADS 1
+
+ENV JAVA_TOOL_OPTIONS -Xms512m -Xmx512m -XX:+UseSerialGC -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=128m

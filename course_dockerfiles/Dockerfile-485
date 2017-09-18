@@ -16,3 +16,5 @@ RUN python3 -m venv env
 RUN env/bin/pip install -r requirements-485.txt
 RUN chown -R autograder .
 RUN rm requirements-485.txt
+
+ENV JAVA_TOOL_OPTIONS -Xms512m -Xmx512m -XX:+UseSerialGC -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=128m
