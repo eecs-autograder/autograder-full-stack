@@ -23,5 +23,29 @@ COPY requirements-485-p2.txt .
 RUN python3 -m venv env-p2
 RUN env-p2/bin/pip install -r requirements-485-p2.txt
 
+COPY requirements-485-p3.txt .
+RUN python3 -m venv env-p3
+RUN env-p3/bin/pip install -r requirements-485-p3.txt
+
+RUN apt-get install -y unzip
+RUN wget https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip
+RUN unzip chromedriver_linux64.zip
+RUN mv chromedriver env-p3/bin
+
 RUN chown -R autograder .
-RUN rm requirements-485-p1.txt requirements-485-p2.txt
+RUN rm requirements-485-p1.txt requirements-485-p2.txt requirements-485-p3.txt
+
+ADD https://dl-ssl.google.com/linux/linux_signing_key.pub .
+RUN apt-key add linux_signing_key.pub
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+RUN apt-get update && apt-get install -y google-chrome-stable
+
+RUN rm linux_signing_key.pub chromedriver_linux64.zip
+
+COPY package.json .
+
+RUN env-p3/bin/pip install nodeenv
+RUN env-p3/bin/nodeenv --python-virtualenv
+RUN . env-p3/bin/activate && npm install .
+
+RUN apt-get install -y jsonlint
