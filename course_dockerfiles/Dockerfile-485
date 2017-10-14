@@ -43,9 +43,8 @@ RUN apt-get update && apt-get install -y google-chrome-stable
 RUN rm linux_signing_key.pub chromedriver_linux64.zip
 
 COPY package.json .
+COPY package-lock.json .
 
 RUN env-p3/bin/pip install nodeenv
 RUN env-p3/bin/nodeenv --python-virtualenv
 RUN . env-p3/bin/activate && npm install .
-
-RUN apt-get install -y jsonlint
