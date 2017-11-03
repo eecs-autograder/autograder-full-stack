@@ -120,7 +120,7 @@ services:
     env_file:
       - ./autograder-server/_dev.env
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 1
 
 volumes:
   redisdata: {}
