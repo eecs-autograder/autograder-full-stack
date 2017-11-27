@@ -27,8 +27,6 @@ services:
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-prod
-    expose:
-      - "8001"
     volumes:
       - ./autograder-server/media_root:/usr/src/app/media_root
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
@@ -46,8 +44,6 @@ services:
     image: 127.0.0.1:5000/postgres
     restart: unless-stopped
     image: postgres:9.5
-    expose:
-      - "5432"
     volumes:
       - pgdata:/var/lib/postgresql/data/
     environment:
@@ -64,8 +60,6 @@ services:
     image: 127.0.0.1:5000/redis
     restart: unless-stopped
     image: redis:latest
-    expose:
-      - "6379"
     volumes:
       - redisdata:/data
 
@@ -81,8 +75,6 @@ services:
     restart: unless-stopped
     image: rabbitmq:latest
     hostname: rabbit
-    expose:
-      - "5672"
 
     deploy:
       replicas: 1
