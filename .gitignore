@@ -11,3 +11,4 @@ urls.txt
 tags
 .idea
 .vscode
+.mypy_cache
