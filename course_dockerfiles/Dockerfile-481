@@ -15,3 +15,4 @@ RUN apt-get install -y unzip
 
 RUN pip3 install astor coverage
 RUN pip3 install pycodestyle
+RUN pip3 install codegen astpretty
