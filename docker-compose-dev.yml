@@ -1,15 +1,26 @@
 version: '3'
 
 services:
-  nginx:
-    image: nginx:latest
+  website:
     restart: unless-stopped
-    container_name: ag-dev-nginx
+    build:
+      context: ./ag-web-typescript
+    container_name: ag-dev-website
     ports:
-      - "80:80"
+      - "4200:80"
     volumes:
-      - ./ag-web-typescript/dist:/www/typescript
-      - ./nginx/development/conf.d:/etc/nginx/conf.d
+      - ./ag-web-typescript:/usr/src/app
+    command: ng serve
+
+#   nginx:
+#     image: nginx:latest
+#     restart: unless-stopped
+#     container_name: ag-dev-nginx
+#     ports:
+#       - "80:80"
+#     volumes:
+#       - ./ag-web-typescript/dist:/www/typescript
+#       - ./nginx/development/conf.d:/etc/nginx/conf.d
 
   django:
     restart: unless-stopped
