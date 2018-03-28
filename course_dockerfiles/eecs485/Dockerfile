@@ -28,7 +28,7 @@ RUN python3 -m venv env-p3
 RUN env-p3/bin/pip install -r requirements-485-p3.txt
 
 RUN apt-get install -y unzip
-RUN wget https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip
+RUN wget https://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip
 RUN unzip chromedriver_linux64.zip
 RUN mv chromedriver env-p3/bin
 
@@ -54,10 +54,21 @@ COPY requirements-485-p5.txt .
 RUN python3 -m venv env-p5
 RUN env-p5/bin/pip install -r requirements-485-p5.txt
 
-RUN wget http://apache.osuosl.org/hadoop/common/hadoop-2.8.2/hadoop-2.8.2.tar.gz
-RUN tar -xvz -C /opt -f hadoop-2.8.2.tar.gz
-ENV PATH="/opt/hadoop-2.8.2/bin:${PATH}"
-RUN rm hadoop-2.8.2.tar.gz
+RUN env-p5/bin/pip install nodeenv
+RUN env-p5/bin/nodeenv --python-virtualenv
+RUN . env-p5/bin/activate && npm install .
+
+RUN wget https://chromedriver.storage.googleapis.com/2.36/chromedriver_linux64.zip
+RUN unzip chromedriver_linux64.zip
+RUN mv chromedriver env-p5/bin
+RUN rm chromedriver_linux64.zip
+
+RUN wget http://apache.osuosl.org/hadoop/common/hadoop-2.8.3/hadoop-2.8.3.tar.gz
+RUN tar -xvz -C /opt -f hadoop-2.8.3.tar.gz
+ENV PATH="/opt/hadoop-2.8.3/bin:${PATH}"
+RUN rm hadoop-2.8.3.tar.gz
 
 RUN chown -R autograder .
 RUN rm requirements-485-p1.txt requirements-485-p2.txt requirements-485-p3.txt requirements-485-p4.txt
+
+RUN apt-get install -y libgconf-2-4
