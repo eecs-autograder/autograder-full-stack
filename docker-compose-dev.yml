@@ -5,11 +5,12 @@ services:
     restart: unless-stopped
     build:
       context: ./ag-web-typescript
+      dockerfile: Dockerfile-website-dev
     container_name: ag-dev-website
     ports:
       - "4200:80"
     volumes:
-      - ./ag-web-typescript:/usr/src/app
+      - ./ag-web-typescript/src:/usr/src/app/src
     command: ng serve
 
 #   nginx:
