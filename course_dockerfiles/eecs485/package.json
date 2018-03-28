@@ -23,7 +23,8 @@
     "jsonlint": "==1.6.2",
     "moment": "==2.18.1",
     "prop-types": "==15.6.0",
-    "react": "==16.0.0",
+	"react": "==16.0.0",
+	"react-autosuggest": "==9.3.4",
     "react-dom": "==16.0.0",
     "react-infinite-scroll-component": "==2.4.0"
   }
