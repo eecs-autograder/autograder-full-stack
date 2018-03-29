@@ -8,20 +8,10 @@ services:
       dockerfile: Dockerfile-website-dev
     container_name: ag-dev-website
     ports:
-      - "4200:80"
+      - "80:4200"
     volumes:
       - ./ag-web-typescript/src:/usr/src/app/src
-    command: ng serve
-
-#   nginx:
-#     image: nginx:latest
-#     restart: unless-stopped
-#     container_name: ag-dev-nginx
-#     ports:
-#       - "80:80"
-#     volumes:
-#       - ./ag-web-typescript/dist:/www/typescript
-#       - ./nginx/development/conf.d:/etc/nginx/conf.d
+    command: ./node_modules/.bin/ng serve  --proxy-config proxy.conf.json --host 0.0.0.0 --port 4200
 
   django:
     restart: unless-stopped
