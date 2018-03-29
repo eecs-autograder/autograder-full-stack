@@ -8,8 +8,19 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./ag-web-typescript/dist:/www/typescript
       - ./nginx/development/conf.d:/etc/nginx/conf.d
+
+  website:
+    restart: unless-stopped
+    build:
+      context: ./ag-web-typescript
+      dockerfile: Dockerfile-website-dev
+    container_name: ag-dev-website
+    expose:
+      - "4200"
+    volumes:
+      - ./ag-web-typescript/src:/usr/src/app/src
+    command: ./node_modules/.bin/ng serve --port 4200 --host 0.0.0.0
 
   django:
     restart: unless-stopped
@@ -24,6 +35,13 @@ services:
     command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini --python-autoreload 1
     env_file:
       - ./autograder-server/_dev.env
+    environment:
+      # Set to false to disable real authentication. Any other string value
+      # will enable real authentication.
+      # Then, using a browser plugin such as EditThisCookie, set the
+      # cookie "username=<email>" to set which user you want to
+      # authenticate as.
+      USE_REAL_AUTH: 'false' 
 
   postgres:
     restart: unless-stopped
