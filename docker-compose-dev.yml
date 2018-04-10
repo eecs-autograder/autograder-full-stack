@@ -13,13 +13,13 @@ services:
   website:
     restart: unless-stopped
     build:
-      context: ./ag-web-typescript
+      context: ./autograder-website
       dockerfile: Dockerfile-website-dev
     container_name: ag-dev-website
     expose:
       - "4200"
     volumes:
-      - ./ag-web-typescript/src:/usr/src/app/src
+      - ./autograder-website/src:/usr/src/app/src
     command: ./node_modules/.bin/ng serve --port 4200 --host 0.0.0.0
 
   django:
@@ -41,7 +41,7 @@ services:
       # Then, using a browser plugin such as EditThisCookie, set the
       # cookie "username=<email>" to set which user you want to
       # authenticate as.
-      USE_REAL_AUTH: 'false' 
+      USE_REAL_AUTH: 'false'
 
   postgres:
     restart: unless-stopped

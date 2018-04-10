@@ -31,7 +31,7 @@ git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
 git checkout develop
 
 cd autograder-server && git checkout develop && cd ..
-cd ag-web-typescript && git checkout develop && cd ..
+cd autograder-website && git checkout develop && cd ..
 ```
 If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the autograder-full-stack directory:
 ```
@@ -43,17 +43,17 @@ git submodule init --update
 docker-compose -f docker-compose-dev.yml build
 docker-compose -f docker-compose-dev.yml up
 ```
-This will start the development stack in the foreground. 
+This will start the development stack in the foreground.
 Note that you _usually_ won't need to rebuild the development stack.
 If you run into a situation where changes aren't automatically detected,
 kill the stack with Ctrl+C and rerun the two commands above.
 
 Times when a rebuild is required:
 - Changing the requirements.txt file in autograder-server
-- Changing the package.json file in ag-web-typescript
+- Changing the package.json file in autograder-website
 
 ## Finish setting up the database
-Run these commands in a _new_ terminal window. 
+Run these commands in a _new_ terminal window.
 
 Apply Django migrations:
 ```
@@ -90,11 +90,11 @@ services:
 Then, navigate to `localhost:9001` in your browser.
 
 ## "Authenticate"
-The development stack allows users to manually specify the user they wish to log in as. 
+The development stack allows users to manually specify the user they wish to log in as.
 In order to specify your desired username, you'll need a browser plugin that lets you edit cookies, such as the
 [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=en) for Google Chrome.
 
-Using the plugin, set a cookie with key "username" and value "<desired username>". 
+Using the plugin, set a cookie with key "username" and value "<desired username>".
 If no cookie is set, it will authenticate you as jameslp@umich.edu by default.
 If you specified a different username when setting up the database, use that username
 as the value for the cookie you set.

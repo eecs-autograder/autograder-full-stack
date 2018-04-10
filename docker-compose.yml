@@ -22,11 +22,11 @@ services:
   website:
     restart: unless-stopped
     build:
-      context: ./ag-web-typescript
+      context: ./autograder-website
       dockerfile: Dockerfile-website-prod
     container_name: ag-website
     volumes:
-      - ./ag-web-typescript/nginx/conf.d:/etc/nginx/conf.d
+      - ./autograder-website/nginx/conf.d:/etc/nginx/conf.d
 
   django:
     container_name: ag-django
