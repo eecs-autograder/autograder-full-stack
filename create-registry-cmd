@@ -1,1 +1,1 @@
-docker service create --name registry --publish 5000:5000 --constraint 'node.hostname == class2' registry:2
+docker service create --name registry --publish 5000:5000 --mount type=volume,source=ag-registry,destination=/var/lib/registry --constraint 'node.hostname == class10' registry:2
