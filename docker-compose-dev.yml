@@ -1,26 +1,17 @@
 version: '3'
 
 services:
-  nginx:
-    image: nginx:latest
-    restart: unless-stopped
-    container_name: ag-dev-nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/development/conf.d:/etc/nginx/conf.d
-
   website:
     restart: unless-stopped
     build:
       context: ./autograder-website
       dockerfile: Dockerfile-website-dev
     container_name: ag-dev-website
-    expose:
-      - "4200"
+    ports:
+      - "4200:4200"
     volumes:
       - ./autograder-website/src:/usr/src/app/src
-    command: ./node_modules/.bin/ng serve --port 4200 --host 0.0.0.0
+    command: ./node_modules/.bin/ng serve --aot=true --proxy-conf=proxy.conf.js --port 4200 --host website
 
   django:
     restart: unless-stopped
@@ -32,7 +23,7 @@ services:
       - "8001"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini --python-autoreload 1
+    command: python3 /usr/src/app/manage.py runserver django:8001
     env_file:
       - ./autograder-server/_dev.env
     environment:
