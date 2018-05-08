@@ -28,14 +28,19 @@ OSX: https://docs.docker.com/docker-for-mac/install/
 ## Clone and checkout
 ```
 git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
+cd autograder-full-stack
 git checkout develop
 
-cd autograder-server && git checkout develop && cd ..
-cd autograder-website && git checkout develop && cd ..
+cd autograder-server
+git checkout develop 
+cd ..
+cd autograder-website
+git checkout develop 
+cd ..
 ```
 If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the autograder-full-stack directory:
 ```
-git submodule init --update
+git submodule update --init
 ```
 
 ## Run the development stack
@@ -70,7 +75,7 @@ from django.contrib.auth.models import User
 
 me = User.objects.get_or_create(username='jameslp@umich.edu')[0]
 course = Course.objects.validate_and_create(name='My Course')
-course.administrators.add(me)
+course.admins.add(me)
 ```
 Note, you can use a different username if you like. If you do, keep track of what you chose, as you'll need it when we visit the autograder in a browser.
 
