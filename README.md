@@ -80,16 +80,15 @@ course.admins.add(me)
 Note, you can use a different username if you like. If you do, keep track of what you chose, as you'll need it when we visit the autograder in a browser.
 
 ## Load the web page
-Navigate to `localhost` in your browser.
+Navigate to `localhost:4200` in your browser.
 
 If you want to switch ports, you'll need to edit the file `autograder-full-stack/docker-compose-dev.yml`.
-Under the `nginx` block, change `"80:80"` to `<port>:80`. For example, to change the port to 9001:
+Under the `website` block, change the `--port` option in the `command` settings. For example, to change the port to 9001:
 ```
 services:
-  nginx:
+  website:
     ...
-    ports:
-      - "9001:80"
+    command: ./node_modules/.bin/ng serve --port 9001 --host 0.0.0.0
     ...
 ```
 Then, navigate to `localhost:9001` in your browser.
@@ -99,7 +98,7 @@ The development stack allows users to manually specify the user they wish to log
 In order to specify your desired username, you'll need a browser plugin that lets you edit cookies, such as the
 [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=en) for Google Chrome.
 
-Using the plugin, set a cookie with key "username" and value "<desired username>".
+Using the plugin, set a cookie with key `username` and value `<desired username>`.
 If no cookie is set, it will authenticate you as jameslp@umich.edu by default.
 If you specified a different username when setting up the database, use that username
 as the value for the cookie you set.
