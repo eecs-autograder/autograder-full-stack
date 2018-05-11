@@ -1,6 +1,6 @@
 version: '3'
 
-# VERSION: 3.0.0.alpha2
+# VERSION: 3.0.0.beta1
 
 services:
   nginx:
@@ -192,7 +192,7 @@ services:
       placement:
         constraints:
           - node.labels.grader_type == deferred
-          
+
 networks:
   default:
     external:

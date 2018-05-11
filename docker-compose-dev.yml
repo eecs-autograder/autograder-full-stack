@@ -1,5 +1,7 @@
 version: '3'
 
+# VERSION: 3.0.0.beta1
+
 services:
   website:
     restart: unless-stopped
