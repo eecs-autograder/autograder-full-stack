@@ -58,7 +58,7 @@ Times when a rebuild is required:
 - Changing the package.json file in autograder-website
 
 ## Finish setting up the database
-Run these commands in a _new_ terminal window.
+After starting the docker images with the ``docker-compose -f docker-compose-dev.yml up`` command, you should run these commands in a _new_ terminal window.
 
 Apply Django migrations:
 ```
@@ -118,3 +118,54 @@ django:
 ```
 To use the fake cookie authentication, leave USE_REAL_AUTH as `'false'`, otherwise, set it to `'true'` to use real authentication.
 You will most likely need to "stop" and "up" your stack for the change to take effect.
+
+# Adding New Docker Images 
+
+To add a new docker image to the autograder, first load the image into docker.  Then you will to 
+manually modify the following files to include your new image name:
+
+  * ./autograder-server/autograder/core/constraints.py
+  * ./autograder-website/autograder/constraints.ts
+  * ./autograder-website/autograder/ag_models/ag_tests.ts
+  
+  
+# Configurations for Non-UMICH servers
+
+**Note:** This assumes you are attempting a production-build system.  
+Development builds do not require these steps. 
+
+### Domain Names
+
+The following changes were necessary to use a non-default server name.  
+Please change $SERVER to your server's DNS name.  
+
+ * add 'SITE_DOMAIN=$SERVER' to ./autograder-server/_prod.env
+ * update 'ALLOWED_HOSTS=$SERVER' in ./autograder-server/_prod.env
+ * update the allowed domains in autograder-server/autograder/rest_api/views/oauth2callback.py
+ * edit ./nginx/production/conf.d/default.conf to reflect the new certs
+
+### SSL Certs
+
+Enabling SSL certs requires:
+ * adding new ssl certs.  Let's assume they are at /etc/ssl/certs/host.{cert,key}
+ * edit ./nginx/production/conf.d/default.conf to reflect the new certs
+ * (optional) edit docer-compose.yml to map a new volumn if your new ssl certs are in a non-default directory
+
+### Google Auth
+
+To use Google's authentication, you will need to follow roughly the following steps:
+
+ * log onto the [Google API Console][https://console.developers.google.com]
+ * create a new project with your correct domain login
+ * add Google+ API service to your project
+ * Under the "Credientials" tab, add oauth credientials for a web-service. 
+ * Add 'https://$WEBSITE/oauth2callback/' as an 'Authorized rediect URIs'
+ * download the .json oauth file (far right download arrow)
+ * move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
+ * update 'OAUTH2_SECRETS_FILENAME=oauth2_secrets.json' in ./autograder-server/_prod.env
+
+## Switching to production
+
+You might need to run this when switching to production mode
+
+``` docker network create ag-swarm-network ```	
