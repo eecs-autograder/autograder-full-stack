@@ -32,6 +32,12 @@ services:
     volumes:
       - ./autograder-website/nginx/conf.d:/etc/nginx/conf.d
 
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == class2
+
   django:
     container_name: ag-django
     image: 127.0.0.1:5000/django
