@@ -12,6 +12,9 @@ SERVER_NAMES = [
     'class9',
     'class10',
     'g280-1',
+    'autograderio01',
+    'autograderio02',
+    'autograderio04',
 ]
 
 

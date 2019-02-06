@@ -34,7 +34,7 @@ services:
       # Then, using a browser plugin such as EditThisCookie, set the
       # cookie "username=<email>" to set which user you want to
       # authenticate as.
-      USE_REAL_AUTH: 'false'
+      USE_REAL_AUTH: 'true'
 
   postgres:
     restart: unless-stopped
