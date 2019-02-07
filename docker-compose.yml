@@ -1,7 +1,5 @@
 version: '3'
 
-# VERSION: 3.0.0.beta2
-
 services:
   nginx:
     container_name: ag-nginx
