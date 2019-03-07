@@ -102,3 +102,19 @@ Using the plugin, set a cookie with key `username` and value `<desired username>
 If no cookie is set, it will authenticate you as jameslp@umich.edu by default.
 If you specified a different username when setting up the database, use that username
 as the value for the cookie you set.
+
+### Switching between real and fake authentication
+In docker-compose-dev.yml, change the `USE_REAL_AUTH` variable in the "environment" block inside of the "django" service definition:
+```
+django:
+    ...
+    environment:
+      # Set to false to disable real authentication. Any other string value
+      # will enable real authentication.
+      # Then, using a browser plugin such as EditThisCookie, set the
+      # cookie "username=<email>" to set which user you want to
+      # authenticate as.
+      USE_REAL_AUTH: 'false'
+```
+To use the fake cookie authentication, leave USE_REAL_AUTH as `'false'`, otherwise, set it to `'true'` to use real authentication.
+You will most likely need to "stop" and "up" your stack for the change to take effect.
