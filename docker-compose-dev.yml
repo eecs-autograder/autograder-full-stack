@@ -104,6 +104,7 @@ services:
 
   grader:
     container_name: ag-dev-grader
+    restart: unless-stopped
     build:
       dockerfile: Dockerfile-grader-dev
       context: ./autograder-server
@@ -119,6 +120,7 @@ services:
 
   deferred_grader:
     container_name: ag-dev-deferred-grader
+    restart: unless-stopped
     build:
       dockerfile: Dockerfile-grader-dev
       context: ./autograder-server
