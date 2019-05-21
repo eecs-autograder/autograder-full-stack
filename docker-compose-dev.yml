@@ -23,7 +23,7 @@ services:
       - "8001"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: python3 /usr/src/app/manage.py runserver django:8001
+    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi_dev.ini
     env_file:
       - ./autograder-server/_dev.env
     environment:
