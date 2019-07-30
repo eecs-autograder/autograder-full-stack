@@ -125,8 +125,9 @@ To add a new docker image to the autograder, first build and your images and pus
 **Supported Operating Systems:**
 - Ubuntu 16.04 (18.04 will probably work)
 
-## Install Docker Community Edition
-Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
+## Install Docker Community Edition and Docker Compose
+Docker CE: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
+Docker Compose: https://docs.docker.com/compose/install/
 
 ## Clone the Source Code
 ```
@@ -163,7 +164,8 @@ Make the following changes to use a non-default server name.
 Please change $SERVER to your server's DNS name. All paths here are relative to `autograder-full-stack`.  
 
   * Update `SITE_DOMAIN=$SERVER` in `./autograder-server/_prod.env`
-  * Update `ALLOWED_HOSTS=$SERVER` in ./autograder-server/_prod.env
+  * Update `ALLOWED_HOSTS=$SERVER` in `./autograder-server/_prod.env`
+  * Update `server_name` in `./nginx/production/conf.d/default.conf` to your server name
 
 ### SSL Certs
 
@@ -187,9 +189,9 @@ To set up Google's authentication, you will need to follow roughly the following
 
  * Log into the [Google API Console](https://console.developers.google.com)
  * Create a new project with your correct domain login
- * Add People API service to your project
+ * Enable the People API service for your project
  * Under the "Credientials" tab, add oauth credientials for a web-service. 
- * Add `https://$WEBSITE/oauth2callback/` as an 'Authorized rediect URIs'
+ * Add `https://$WEBSITE/api/oauth2callback/` as an 'Authorized rediect URIs'
  * Download the .json oauth file (far right download arrow)
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
  * Update `OAUTH2_SECRETS_FILENAME=oauth2_secrets.json` in ./autograder-server/_prod.env
