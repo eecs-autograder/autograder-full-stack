@@ -5,4 +5,4 @@
 [submodule "autograder-website"]
 	path = autograder-website
 	url = ../autograder-website.git
-	branch = release-3.0.0.alpha22
+	branch = release-3.0.0.alpha23
