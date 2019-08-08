@@ -1,7 +1,7 @@
 [submodule "autograder-server"]
 	path = autograder-server
 	url = ../autograder-server.git
-	branch = release-3.3.0
+	branch = release-3.3.1
 [submodule "autograder-website"]
 	path = autograder-website
 	url = ../autograder-website.git
