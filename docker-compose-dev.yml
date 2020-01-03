@@ -1,17 +1,28 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    container_name: ag-dev-nginx
+    ports:
+      - "4200:80"
+    volumes:
+      - ./nginx/development/conf.d:/etc/nginx/conf.d
+
   website:
     restart: unless-stopped
     build:
-      context: ./autograder-website
+      context: ./ag-website-vue
       dockerfile: Dockerfile-website-dev
     container_name: ag-dev-website
-    ports:
-      - "4200:4200"
+    expose:
+      - "8080"
     volumes:
-      - ./autograder-website/src:/usr/src/app/src
-    command: ./node_modules/.bin/ng serve --aot=true --port 4200 --host website
+      - ./ag-website-vue/src:/usr/src/app/src
+      - ./ag-website-vue/tests:/usr/src/app/tests
+      - ./ag-website-vue/public:/usr/src/app/public
+    command: npm run serve -- --host website
 
   django:
     restart: unless-stopped
@@ -23,7 +34,7 @@ services:
       - "8001"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: python3 /usr/src/app/manage.py runserver django:8001
+    command: /usr/local/bin/uwsgi --py-autoreload 1 --ini /usr/src/app/uwsgi/uwsgi.ini
     env_file:
       - ./autograder-server/_dev.env
     environment:
@@ -36,7 +47,7 @@ services:
 
   postgres:
     restart: unless-stopped
-    image: postgres:latest
+    image: postgres:9.5
     container_name: ag-dev-postgres
     expose:
       - "5432"
@@ -62,6 +73,8 @@ services:
     hostname: rabbit
     expose:
       - "5672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
 
   celery_small_tasks:
     restart: unless-stopped
@@ -136,3 +149,4 @@ services:
 volumes:
   redisdata: {}
   pgdata: {}
+  rabbitmqdata: {}

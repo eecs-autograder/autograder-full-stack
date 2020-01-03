@@ -24,11 +24,11 @@ services:
     image: 127.0.0.1:5000/website
     restart: unless-stopped
     build:
-      context: ./autograder-website
+      context: ./ag-website-vue
       dockerfile: Dockerfile-website-prod
     container_name: ag-website
     volumes:
-      - ./autograder-website/nginx/conf.d:/etc/nginx/conf.d
+      - ./ag-website-vue/nginx/conf.d:/etc/nginx/conf.d
 
     deploy:
       replicas: 1
@@ -91,6 +91,8 @@ services:
     restart: unless-stopped
     image: rabbitmq:latest
     hostname: rabbit
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
 
     deploy:
       replicas: 1
@@ -207,3 +209,4 @@ networks:
 volumes:
   redisdata: {}
   pgdata: {}
+  rabbitmqdata: {}

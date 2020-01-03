@@ -28,10 +28,10 @@ cd autograder-full-stack
 git checkout master
 
 cd autograder-server
-git checkout develop 
+git checkout develop
 cd ..
-cd autograder-website
-git checkout develop 
+cd ag-website-vue
+git checkout develop
 cd ..
 ```
 If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the autograder-full-stack directory:
@@ -51,7 +51,7 @@ kill the stack with Ctrl+C and rerun the two commands above.
 
 Times when a rebuild is required:
 - Changing the requirements.txt file in autograder-server
-- Changing the package.json file in autograder-website
+- Changing the package.json file in ag-website-vue
 
 ## Finish setting up the database
 After starting the docker images with the ``docker-compose -f docker-compose-dev.yml up`` command, you should run these commands in a _new_ terminal window.
@@ -79,12 +79,13 @@ Note, you can use a different username if you like. If you do, keep track of wha
 Navigate to `localhost:4200` in your browser.
 
 If you want to switch ports, you'll need to edit the file `autograder-full-stack/docker-compose-dev.yml`.
-Under the `website` block, change the `--port` option in the `command` settings. For example, to change the port to 9001:
+Under the `nginx` block, change the `ports` option. For example, to change the port to 9001:
 ```
 services:
-  website:
+  nginx:
     ...
-    command: ./node_modules/.bin/ng serve --port 9001 --host 0.0.0.0
+    ports:
+      - "4200:80"
     ...
 ```
 Then, navigate to `localhost:9001` in your browser.
@@ -115,7 +116,7 @@ django:
 To use the fake cookie authentication, leave USE_REAL_AUTH as `'false'`, otherwise, set it to `'true'` to use real authentication.
 You will most likely need to "stop" and "up" your stack for the change to take effect.
 
-## Adding New Docker Images 
+## Adding New Docker Images
 
 To add a new docker image to the autograder, first build and your images and push them somewhere accessible by your servers. Then, use the `sandbox_docker_image.py` script at https://github.com/eecs-autograder/autograder-contrib to register the metadata of those images.
 
@@ -160,8 +161,8 @@ If you don't do this, then you will experience difficult-to-debug issues.
 ### Domain Names
 
 The server name is set to `autograder.io` by default.
-Make the following changes to use a non-default server name.  
-Please change $SERVER to your server's DNS name. All paths here are relative to `autograder-full-stack`.  
+Make the following changes to use a non-default server name.
+Please change $SERVER to your server's DNS name. All paths here are relative to `autograder-full-stack`.
 
   * Update `SITE_DOMAIN=$SERVER` in `./autograder-server/_prod.env`
   * Update `ALLOWED_HOSTS=$SERVER` in `./autograder-server/_prod.env`
@@ -171,7 +172,7 @@ Please change $SERVER to your server's DNS name. All paths here are relative to 
 
 Enabling SSL certs requires:
   * Create your ssl certs and add them to `/etc/ssl`. We will mount this directory to `/etc/ssl` in the docker container.
-  * Edit `ssl_certificate` and `ssl_certificate_key` in  `./nginx/production/conf.d/default.conf` to point to your ssl certs. 
+  * Edit `ssl_certificate` and `ssl_certificate_key` in  `./nginx/production/conf.d/default.conf` to point to your ssl certs.
     * NOTE: The path to the certs in this file is the path inside the docker container.
   * (Optional) In `docker-compose.yml`, edit the `volumes` block in the `nginx` service block if your ssl certs aren't in `/etc/ssl`. For example:
     ```
@@ -190,7 +191,7 @@ To set up Google's authentication, you will need to follow roughly the following
  * Log into the [Google API Console](https://console.developers.google.com)
  * Create a new project with your correct domain login
  * Enable the People API service for your project
- * Under the "Credientials" tab, add oauth credientials for a web-service. 
+ * Under the "Credientials" tab, add oauth credientials for a web-service.
  * Add `https://$WEBSITE/api/oauth2callback/` as an 'Authorized rediect URIs'
  * Download the .json oauth file (far right download arrow)
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
@@ -202,7 +203,7 @@ To set up Google's authentication, you will need to follow roughly the following
   * (Optional) increase `client_max_body_size` in `./nginx/production/conf.d/default.conf`.
   * (Optional) In `./autograder-server/autograder/core/constants.py`, tune `MAX_VIRTUAL_MEM_LIMIT`, `MAX_SUBPROCESS_TIMEOUT`, and `MAX_PROCESS_LIMIT` to your liking.
   * (Optional) Adjust the number of grader workers in `docker-compose.yml`:
-    ```  
+    ```
     grader:
       # *** Change the value *** of -c to set the number of workers.
       # Even with many CPU cores, be conservative with this value.
@@ -214,7 +215,7 @@ To set up Google's authentication, you will need to follow roughly the following
     ```
   * You may need to create the swarm network that `docker-compose.yml` expects:
   ```
-  docker network create ag-swarm-network 
+  docker network create ag-swarm-network
   ```
 
 ## Run the Production Stack
@@ -262,7 +263,7 @@ course.admins.add(me)
 
 ## Other Things to Know
 ### Useful scripts
-A variety of scripts that use the web API can be found at `https://github.com/eecs-autograder/autograder-contrib` and `https://gitlab.eecs.umich.edu/akamil/autograder-tools`. 
+A variety of scripts that use the web API can be found at `https://github.com/eecs-autograder/autograder-contrib` and `https://gitlab.eecs.umich.edu/akamil/autograder-tools`.
   * IMPORTANT: Make sure to use the correct URL for your deployment. In the former set of scripts, this is configurable with command-line arguments. In the latter, you may need to modify the source code.
 
 ### Giving a user permission to create courses
