@@ -6,7 +6,7 @@ can significantly improve performance. This document explains the steps required
 ## Familiarize Yourself with the Non-Swarm Production Setup
 Read [this tutorial](./docs/production_non_swarm_setup.md) first.
 Many of the steps and required config file changes are detailed there.
-Read and follow them EXCEPT for the "Run the Production Stack" section.
+Read and follow them EXCEPT for the "Run the Production Stack" and "Finish setting up the database" sections.
 
 ## Requirements and Recommendations
 - At least 3 servers running Ubuntu 16.04 or 18.04
@@ -136,4 +136,43 @@ docker node update --label-rm {label} {node hostname}
 Run the following command:
 ```
 docker service create --name registry --publish 5000:5000 --mount type=volume,source=ag-registry,destination=/var/lib/registry --constraint 'node.labels.registry == true' registry:2
+```
+
+## Build and Deploy the Stack
+Run these commands in the `autograder-full-stack` directory of your manager node. You will
+need to rerun these commands every time you update the source code.
+```
+# Build the images
+docker-compose build
+
+# Push the images to the registry
+docker-compose push
+
+# Deploy the stack
+docker stack deploy -c docker-compose.yml ag-stack
+
+# View the list of running services
+docker service ls
+```
+Note: You'll also need to apply database migrations. See the next section for instructions.
+
+## Finish setting up the database
+On the node labelled `django_app`, apply the database migrations. You should do this every time you update the source code:
+```
+docker exec -it ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1) python3 manage.py migrate
+```
+
+If this is a new deployment with no existing data, you'll need to create a course and add yourself to it as an admin. Start a Python shell inside the Django container:
+```
+docker exec -it ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1) python3 manage.py shell
+```
+In the Python shell, make yourself a superuser, create a course, and add yourself as an administrator:
+```
+from autograder.core.models import Course
+from django.contrib.auth.models import User
+
+# Substitute your email address
+me = User.objects.get_or_create(username='jameslp@umich.edu', is_superuser=True)[0]
+course = Course.objects.validate_and_create(name='My Course')
+course.admins.add(me)
 ```
