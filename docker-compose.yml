@@ -18,7 +18,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.webserver == true
 
   website:
     image: 127.0.0.1:5000/website
@@ -34,7 +34,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.webserver == true
 
   django:
     container_name: ag-django
@@ -53,7 +53,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.django_app == true
 
   postgres:
     container_name: ag-postgres
@@ -69,7 +69,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.database == true
 
   redis:
     container_name: ag-redis
@@ -83,7 +83,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.cache == true
 
   rabbitmq:
     container_name: ag-rabbitmq
@@ -98,7 +98,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.rabbitmq_broker == true
 
   celery_small_tasks:
     container_name: ag-celery-small-tasks
@@ -117,7 +117,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.small_tasks == true
 
   celery_project_downloads:
     container_name: ag-celery-project-downloads
@@ -136,7 +136,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.small_tasks == true
 
   celerybeat:
     container_name: ag-celerybeat
@@ -157,7 +157,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == class2
+          - node.labels.small_tasks == true
 
   grader:
     container_name: ag-grader
@@ -172,34 +172,67 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 4
+    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 2
 
     deploy:
       mode: global
       placement:
         constraints:
-          - node.labels.grader_type == sync
+          - node.labels.grader == true
 
-  deferred_grader:
-    container_name: ag-deferred-grader
+  tiny_grader:
+    container_name: ag-tiny-grader
+    image: 127.0.0.1:5000/grader
     restart: unless-stopped
-    image: 127.0.0.1:5000/deferred_grader
-    build:
-      context: ./autograder-server
-      dockerfile: Dockerfile-grader-prod
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./autograder-server/media_root:/usr/src/app/media_root
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 4
+    command: /usr/local/bin/celery -A autograder worker -n tiny_grader@%h --loglevel=info -c 1
 
     deploy:
       mode: global
       placement:
         constraints:
-          - node.labels.grader_type == deferred
+          - node.labels.tiny_grader == true
+
+  deferred_grader:
+    container_name: ag-deferred-grader
+    restart: unless-stopped
+    image: 127.0.0.1:5000/grader
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server/media_root:/usr/src/app/media_root
+    env_file:
+      - ./autograder-server/_prod.env
+
+    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 2
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.deferred_grader == true
+
+  tiny_deferred_grader:
+    container_name: ag-tiny-deferred-grader
+    restart: unless-stopped
+    image: 127.0.0.1:5000/grader
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./autograder-server/media_root:/usr/src/app/media_root
+    env_file:
+      - ./autograder-server/_prod.env
+
+    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n tiny_deferred@%h --loglevel=info -c 1
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.tiny_deferred_grader == true
 
 networks:
   default:
