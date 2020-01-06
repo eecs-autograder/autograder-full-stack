@@ -64,7 +64,7 @@ Here is a summary of the steps from the above link:
 printed in the previous step.
 1. On the swarm manager node, run this command to create the swarm network:
 ```
-docker network create ag-swarm-network
+docker network create ag-swarm-network --driver overlay
 ```
 
 ## Set Up NFS
