@@ -78,8 +78,10 @@ To set up Google's authentication, you will need to follow roughly the following
  ### Other Tweaks
   * In `./autograder-server/uwsgi/uwsgi.ini`, adjust `processes` based on how many cpu cores your machine has.
     * NOTE: For a single-server deployment, you should be conservative with this value.
+  * Update `SYSADMIN_CONTACT` to refer to your system administrator if you are
+  using a custom deployment.
   * (Optional) increase `client_max_body_size` in `./nginx/production/conf.d/default.conf`.
-  * (Optional) In `./autograder-server/autograder/core/constants.py`, tune `MAX_VIRTUAL_MEM_LIMIT`, `MAX_SUBPROCESS_TIMEOUT`, and `MAX_PROCESS_LIMIT` to your liking.
+  * (Optional) In `./autograder-server/autograder/core/constants.py`, tune `MAX_VIRTUAL_MEM_LIMIT`, `MAX_SUBPROCESS_TIMEOUT`, and `MAX_PROCESS_LIMIT` to your liking. Set the corresponding values in `./ag-website-vue/src/constants.ts` as well.
   * (Optional) Adjust the number of grader workers in `docker-compose.yml`:
     ```
     grader:
