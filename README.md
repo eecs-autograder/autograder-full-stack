@@ -48,3 +48,22 @@ for submission in stuck:
   submission.status = Submission.GradingStatus.received
   submission.save()
 ```
+
+### Creating a Custom API Token
+To create a custom api token, run the following in a django shell:
+```
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
+# Replace <username> with whatever you want.
+user = User.objects.create(username='<username>@autograder.io')
+token, created = Token.objects.get_or_create(user=user)
+# If that username is taken, try another one.
+assert created
+
+# Securely share this token with whomever needs it.
+print(token)
+```
+
+Add the username (`<username>@autograder.io`) to the appropriate roster for your course to give the token user the permissions it needs.
+
