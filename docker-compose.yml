@@ -190,7 +190,7 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -n tiny_grader@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
 
     deploy:
       mode: global
@@ -226,7 +226,7 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n tiny_deferred@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 1
 
     deploy:
       mode: global
