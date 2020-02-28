@@ -98,6 +98,8 @@ If no cookie is set, it will authenticate you as jameslp@umich.edu by default.
 If you specified a different username when setting up the database, use that username
 as the value for the cookie you set.
 
+Next, set a cookie with key `username` and any value. The website only tries to automatically log the user in if this cookie is present, so if this cookie is not present you will have to click the "Sign In" button every time you refresh the page. 
+
 ### Switching between real and fake authentication
 In docker-compose-dev.yml, change the `USE_REAL_AUTH` variable in the "environment" block inside of the "django" service definition:
 ```
