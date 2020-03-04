@@ -90,9 +90,10 @@ the following entry (all one line), replacing {home} with the absolute path to y
     sudo systemctl enable nfs-kernel-server.service
     sudo systemctl start nfs-kernel-server.service
     ```
-1. Create the autograder-full-stack directory on all the remaining servers:
+1. Create the autograder-full-stack directory and install nfs-common on all the remaining servers:
     ```
     mkdir $HOME/autograder-full-stack
+    sudo apt install -y nfs-common
     ```
 1. Mount the exported directory on those servers by adding the following entry to `/etc/fstab` on those servers, replacing {home} with the absolute path to your home directory and {server} with the hostname of the server exporting the directory:
     ```
