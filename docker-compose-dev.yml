@@ -1,4 +1,19 @@
-version: '3'
+version: '3.7'
+
+x-grader:
+  &base-grader
+
+  restart: unless-stopped
+  build:
+    dockerfile: Dockerfile-grader-dev
+    context: ./autograder-server
+
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./autograder-server:/usr/src/app
+
+  env_file:
+    - ./autograder-server/_dev.env
 
 services:
   nginx:
@@ -116,35 +131,28 @@ services:
    #  AG_SUBMISSION_LISTENER_INTERVAL: 5
 
   grader:
+    <<: *base-grader
     container_name: ag-dev-grader
-    restart: unless-stopped
-    build:
-      dockerfile: Dockerfile-grader-dev
-      context: ./autograder-server
-
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server:/usr/src/app
-
-    env_file:
-      - ./autograder-server/_dev.env
 
     command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
 
+  fast_grader:
+    <<: *base-grader
+    container_name: ag-dev-fast-grader
+
+    command: /usr/local/bin/celery -A autograder worker -n fast_submission_grader@%h --loglevel=info -c 1
+
   deferred_grader:
+    <<: *base-grader
     container_name: ag-dev-deferred-grader
-    restart: unless-stopped
-    build:
-      dockerfile: Dockerfile-grader-dev
-      context: ./autograder-server
 
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server:/usr/src/app
-    env_file:
-      - ./autograder-server/_dev.env
+    command: /usr/local/bin/celery -A autograder worker -n deferred@%h --loglevel=info -c 1
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 1
+  rerun_grader:
+    <<: *base-grader
+    container_name: ag-dev-rerun-grader
+
+    command: /usr/local/bin/celery -A autograder worker -n rerun@%h --loglevel=info -c 1
 
 volumes:
   redisdata: {}

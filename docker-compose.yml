@@ -1,4 +1,18 @@
-version: '3'
+version: '3.7'
+
+x-grader:
+  &base-grader
+
+  image: 127.0.0.1:5000/grader
+  restart: unless-stopped
+  build:
+    context: ./autograder-server
+    dockerfile: Dockerfile-grader-prod
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./autograder-server/media_root:/usr/src/app/media_root
+  env_file:
+    - ./autograder-server/_prod.env
 
 services:
   nginx:
@@ -160,18 +174,8 @@ services:
           - node.labels.small_tasks == true
 
   grader:
+    <<: *base-grader
     container_name: ag-grader
-    image: 127.0.0.1:5000/grader
-    restart: unless-stopped
-    build:
-      context: ./autograder-server
-      dockerfile: Dockerfile-grader-prod
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server/media_root:/usr/src/app/media_root
-    env_file:
-      - ./autograder-server/_prod.env
-
     command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 2
 
     deploy:
@@ -181,15 +185,8 @@ services:
           - node.labels.grader == true
 
   tiny_grader:
+    <<: *base-grader
     container_name: ag-tiny-grader
-    image: 127.0.0.1:5000/grader
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server/media_root:/usr/src/app/media_root
-    env_file:
-      - ./autograder-server/_prod.env
-
     command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 1
 
     deploy:
@@ -198,17 +195,35 @@ services:
         constraints:
           - node.labels.tiny_grader == true
 
-  deferred_grader:
-    container_name: ag-deferred-grader
-    restart: unless-stopped
-    image: 127.0.0.1:5000/grader
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server/media_root:/usr/src/app/media_root
-    env_file:
-      - ./autograder-server/_prod.env
+  fast_grader:
+    <<: *base-grader
+    container_name: ag-fast-grader
+    command: /usr/local/bin/celery -A autograder worker -n fast_submission_grader@%h --loglevel=info -c 2
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 2
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.fast_grader == true
+
+  tiny_fast_grader:
+    <<: *base-grader
+    container_name: ag-tiny-fast-grader
+    command: /usr/local/bin/celery -A autograder worker -n fast_submission_grader@%h --loglevel=info -c 1
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.tiny_fast_grader == true
+
+  deferred_grader:
+    <<: *base-grader
+    container_name: ag-deferred-grader
+
+    # We'll keep "-Q deferred" for now in case there are tasks in that queue
+    # when we deploy
+    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 2
 
     deploy:
       mode: global
@@ -217,22 +232,42 @@ services:
           - node.labels.deferred_grader == true
 
   tiny_deferred_grader:
+    <<: *base-grader
     container_name: ag-tiny-deferred-grader
-    restart: unless-stopped
-    image: 127.0.0.1:5000/grader
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./autograder-server/media_root:/usr/src/app/media_root
-    env_file:
-      - ./autograder-server/_prod.env
 
-    command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 1
+    command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
 
     deploy:
       mode: global
       placement:
         constraints:
           - node.labels.tiny_deferred_grader == true
+
+  rerun_grader:
+    <<: *base-grader
+    container_name: ag-rerun-grader
+
+    # We'll keep "-Q rerun" for now in case there are tasks in that queue
+    # when we deploy
+    command: /usr/local/bin/celery -A autograder worker -Q rerun -n rerun@%h --loglevel=info -c 2
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.rerun_grader == true
+
+  tiny_rerun_grader:
+    <<: *base-grader
+    container_name: ag-tiny-rerun-grader
+
+    command: /usr/local/bin/celery -A autograder worker -Q rerun -n rerun@%h --loglevel=info -c 1
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.tiny_rerun_grader == true
 
 networks:
   default:

@@ -105,6 +105,8 @@ the following entry (all one line), replacing {home} with the absolute path to y
 In order to avoid extra config file changes, we will apply labels to our nodes
 to tell Docker Swarm which machine(s) to run which service(s) on.
 
+__Note__: To enable "tiny" workers, uncomment the `tiny_grader`, `tiny_fast_grader`, `tiny_deferred_grader`, and `tiny_rerun_grader` blocks in `docker-compose.yml`. We use the "tiny" labels on NUCs in our swarm that are suited for grading one submission at a time.
+
 Here is a list of all the labels that should be applied as needed:
 - `registry`: Stores and serves Docker images needed to create services.
 - `webserver`: The reverse proxy that handles incoming web traffic and the webserver that serves the frontent application.
@@ -114,9 +116,13 @@ Here is a list of all the labels that should be applied as needed:
 - `rabbitmq_broker`: The Rabbitmq async task broker.
 - `small_tasks`: Various background tasks such as queueing submissions, updating submission statuses, and building grade spreadsheets and zips of submitted files.
 - `grader`: Grading worker for non-deferred tests.
-- `tiny_grader`: Grading worker for non-deferred tests that only grades one submission at a time.
+- `tiny_grader`: Like `grader`, but only runs one task at a time.
+- `fast_grader`: Dedicated worker for submissions with a low worst-case runtime.
+- `tiny_fast_grader`: Like `fast_grader`, but only runs one task at a time.
 - `deferred_grader`: Grading worker for deferred tests.
-- `tiny_deferred_grader`: Grading worker for deferred tests that only grades one submission at a time.
+- `tiny_deferred_grader`: Like `deferred_grader`, but only runs one task at a time.
+- `rerun_grader`: Grading worker for re-running tests.
+- `tiny_rerun_grader`: Like `rerun_grader`, but only runs one task at a time.
 
 To apply a label to a node, run this command, replacing `{label}` and `{node hostname}`
 with the label to apply and the hostname of the node:

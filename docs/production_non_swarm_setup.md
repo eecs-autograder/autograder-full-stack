@@ -101,17 +101,15 @@ To set up Google's authentication, you will need to follow roughly the following
 ## Run the Production Stack
 ```
 docker-compose build
-docker-compose up -d --scale tiny_grader=0 --scale tiny_deferred_grader=0
+docker-compose up -d
 ```
 
 To update the containers:
 ```
 docker-compose stop
 docker-compose build
-docker-compose up -d --scale tiny_grader=0 --scale tiny_deferred_grader=0
+docker-compose up -d
 ```
-
-__NOTE__: If you comment out the `tiny_grader` and `tiny_deferred_grader` blocks in docker-compose.yml, then you can omit `--scale tiny_grader=0 --scale tiny_deferred_grader=0` from the above commands.
 
 Other useful commands:
 ```
