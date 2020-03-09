@@ -4,7 +4,7 @@ Using Docker Swarm to deploy this codebase on more than one machine
 can significantly improve performance. This document explains the steps required to do so.
 
 ## Familiarize Yourself with the Non-Swarm Production Setup
-Read [this tutorial](./docs/production_non_swarm_setup.md) first.
+Read [this tutorial](./production_non_swarm_setup.md) first.
 Many of the steps and required config file changes are detailed there.
 Read and follow them EXCEPT for the "Run the Production Stack" and "Finish setting up the database" sections.
 
