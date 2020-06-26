@@ -89,16 +89,14 @@ services:
 Then, navigate to `localhost:9001` in your browser.
 
 ## "Authenticate"
-The development stack allows users to manually specify the user they wish to log in as.
-In order to specify your desired username, you'll need a browser plugin that lets you edit cookies, such as the
-[EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=en) for Google Chrome.
+By default, the development stack allows users to manually specify the user they wish to log in as.
+The website only tries to automatically log the user in if a cookie called "token" is present.
+If you are using the default fake authentication and this cookie is not present, **you will have to click the "Sign In" button every time you refresh the page**. To avoid this, use a browser plugin such as [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=en) for Google Chrome to create a cookie with "token" and any value.
 
-Using the plugin, set a cookie with key `username` and value `<desired username>`.
-If no cookie is set, it will authenticate you as jameslp@umich.edu by default.
+To make the dev stack log you in as a specific user, set a cookie with key `username` and value `<desired username>`.
+If the `username` cookie not is set, it will authenticate you as jameslp@umich.edu by default.
 If you specified a different username when setting up the database, use that username
 as the value for the cookie you set.
-
-Next, set a cookie with key `username` and any value. The website only tries to automatically log the user in if this cookie is present, so if this cookie is not present you will have to click the "Sign In" button every time you refresh the page. 
 
 ### Switching between real and fake authentication
 In docker-compose-dev.yml, change the `USE_REAL_AUTH` variable in the "environment" block inside of the "django" service definition:
