@@ -1,5 +1,7 @@
 version: '3.7'
 
+# This file is intended for multi-server deployment with docker swarm.
+
 x-grader:
   &base-grader
 
@@ -268,6 +270,35 @@ services:
       placement:
         constraints:
           - node.labels.tiny_rerun_grader == true
+
+  image_builder:
+    <<: *base-grader
+    container_name: ag-image-builder
+
+    command: /usr/local/bin/celery -A autograder worker -Q build_sandbox_image -n image_builder@%h --loglevel=info -c 1
+
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.image_builder == true
+
+  sandbox_image_registry:
+    image: registry:2
+    container_name: ag-sandbox-image-registry
+    restart: unless-stopped
+
+    ports:
+      - 5001:5000
+
+    volumes:
+      - sandbox_image_registry_data:/var/lib/registry
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.custom_image_registry == true
 
 networks:
   default:

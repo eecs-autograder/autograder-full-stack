@@ -91,7 +91,24 @@ To set up Google's authentication, you will need to follow roughly the following
 
     deferred_grader:
       # This -c value can be lower than the other one. If resources are tight, set to 1 or 2
-      command: /usr/local/bin/celery -A autograder worker -Q deferred,rerun -n deferred@%h --loglevel=info -c 2
+      command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 2
+    ```
+  * (Single-server non-swarm only) Comment out the following blocks in `docker-compose.yml`:
+    ```
+    tiny_grader:
+      ...
+
+    fast_grader:
+      ...
+
+    tiny_fast_grader:
+      ...
+
+    tiny_deferred_grader:
+      ...
+
+    tiny_rerun_grader:
+      ...
     ```
   * You may need to create the swarm network that `docker-compose.yml` expects:
   ```

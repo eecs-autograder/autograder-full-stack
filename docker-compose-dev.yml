@@ -154,7 +154,25 @@ services:
 
     command: /usr/local/bin/celery -A autograder worker -n rerun@%h --loglevel=info -c 1
 
+  image_builder:
+    <<: *base-grader
+    container_name: ag-dev-image-builder
+
+    command: /usr/local/bin/celery -A autograder worker -Q build_sandbox_image -n image_builder@%h --loglevel=info -c 1
+
+  sandbox_image_registry:
+    image: registry:2
+    container_name: ag-dev-sandbox-image-registry
+    restart: unless-stopped
+
+    ports:
+      - 5001:5000
+
+    volumes:
+      - sandbox_image_registry_data:/var/lib/registry
+
 volumes:
   redisdata: {}
   pgdata: {}
   rabbitmqdata: {}
+  sandbox_image_registry_data: {}

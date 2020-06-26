@@ -123,6 +123,8 @@ Here is a list of all the labels that should be applied as needed:
 - `tiny_deferred_grader`: Like `deferred_grader`, but only runs one task at a time.
 - `rerun_grader`: Grading worker for re-running tests.
 - `tiny_rerun_grader`: Like `rerun_grader`, but only runs one task at a time.
+- `image_builder`: Processes custom sandbox image build tasks.
+- `custom_image_registry`: A Docker registry that stores custom sandbox images.
 
 To apply a label to a node, run this command, replacing `{label}` and `{node hostname}`
 with the label to apply and the hostname of the node:
@@ -136,7 +138,7 @@ docker node update --label-rm {label} {node hostname}
 ```
 
 ### Label Recommendations
-- The `database`, `registry`, `cache`, and `rabbitmq_broker` labels should be applied to __ONE NODE EACH__. If you ever change which node has the `database` and `registry` labels, you will need to migrate that data to the new server.
+- The `database`, `registry`, `cache`, `rabbitmq_broker`, and `custom_image_registry` labels should be applied to __ONE NODE EACH__. If you ever change which node has the `database` and `registry` labels, you will need to migrate that data to the new server.
 - Do NOT put `grader`/`tiny_grader`/`deferred_grader`/`tiny_deferred_grader` on the same server. Each node intended as a grading worker should have at most one of these labels.
 
 ## Create the Registry Service
