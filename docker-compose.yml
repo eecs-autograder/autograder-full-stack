@@ -288,8 +288,11 @@ services:
     container_name: ag-sandbox-image-registry
     restart: unless-stopped
 
-    expose:
-      - "5000"
+    environment:
+      REGISTRY_HTTP_ADDR: '0.0.0.0:5001'
+
+    ports:
+      - "5001:5001"
 
     volumes:
       - sandbox_image_registry_data:/var/lib/registry
