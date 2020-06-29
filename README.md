@@ -3,11 +3,11 @@ This repository contains Docker and other configuration files needed to run and 
 # Dev Setup
 See [this tutorial](./docs/development_setup.md).
 
-# Production Setup (Non-Swarm)
-See [this tutorial](./docs/production_non_swarm_setup.md).
-
-# Production Setup (With Swarm)
+# Swarm Production Setup
 See [this tutorial](./docs/swarm_deployment.md).
+
+# Single-server Production Setup
+See [this tutorial](./docs/production_non_swarm_setup.md).
 
 ## Other Recipes and Things to Know
 ### Useful scripts

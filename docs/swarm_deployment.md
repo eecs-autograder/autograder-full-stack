@@ -1,12 +1,8 @@
 # Production Deployment Using Docker Swarm
 
 Using Docker Swarm to deploy this codebase on more than one machine
-can significantly improve performance. This document explains the steps required to do so.
-
-## Familiarize Yourself with the Non-Swarm Production Setup
-Read [this tutorial](./production_non_swarm_setup.md) first.
-Many of the steps and required config file changes are detailed there.
-Read and follow them EXCEPT for the "Run the Production Stack" and "Finish setting up the database" sections.
+can significantly improve performance and stability.
+This document explains the steps required to do so.
 
 ## Requirements and Recommendations
 - At least 3 servers running Ubuntu 16.04 or 18.04
@@ -19,6 +15,10 @@ Read and follow them EXCEPT for the "Run the Production Stack" and "Finish setti
 - The servers should all be able to communicate with each other over a network.
 Only the swarm node labelled `webserver` (more on labels later) needs to accept incoming
 traffic on ports 80 and 443.
+
+## First Steps
+Follow the instructions in [this tutorial](./production_first_steps.md) for the
+server that you want use as swarm manager.
 
 ## Install Docker Community Edition
 Install Docker on every server you want to have in the swarm.
@@ -43,6 +43,15 @@ sudo apt-get update
 sudo apt-get install -y docker-ce
 sudo usermod -aG docker $(logname)
 ```
+
+## Increase the nofile Limit
+Add these two lines to `/etc/security/limits.conf` on each server:
+```
+*                soft    nofile          1000000
+*                hard    nofile          1000000
+```
+If you don't do this, then you will likely experience difficult-to-debug issues
+on your grading workers.
 
 ## Initialize the Swarm
 See https://docs.docker.com/engine/swarm/swarm-tutorial/ for full details.
