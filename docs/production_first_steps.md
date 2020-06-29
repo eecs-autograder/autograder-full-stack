@@ -78,3 +78,30 @@ To set up Google's authentication, you will need to follow roughly the following
  * Download the .json oauth file (far right download arrow)
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
  * Update `OAUTH2_SECRETS_FILENAME=oauth2_secrets.json` in ./autograder-server/_prod.env
+
+### (Optional) Tune Resource-limit Environment Variables
+Depending on how many servers you are using for deployment and the specs of
+those servers, you may wish to adjust the resource limits placed on Docker
+containers. To change these values, uncomment the appopriate environment
+variable in ./autograder-server/_prod.env and set its value as you see fit:
+
+`SANDBOX_MEM_LIMIT`: The physical memory limit (using cgroups) placed on
+Docker containers used to grade submissions. For single-server deployment,
+re recommend setting this to a value such that grading workers can never use
+more than 50% of total system memory. Defaults to 4gb. Setting this value too
+low won't cause programs to crash outright, but rather can cause more frequent
+page faults and thereby decrease performance.
+
+See https://docs.docker.com/config/containers/resource_constraints/#memory for full details.
+`SANDBOX_PIDS_LIMIT`: The maximum number of processes for a container (limited
+using cgroups). Be careful not to set this value too low, otherwise test cases
+may not run properly. Defaults to 512.
+
+`IMAGE_BUILD_MEMORY_LIMIT`: Similar to `SANDBOX_MEM_LIMIT`, but for building
+custom images. Defaults to 4gb
+
+`IMAGE_BUILD_NPROC_LIMIT`: the max number of processes when building a custom
+image (limited using ulimit). Defaults to 1000.
+
+`IMAGE_BUILD_TIMEOUT`: The time limit for building a custom image, in seconds.
+Defaults to 600.
