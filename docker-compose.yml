@@ -309,3 +309,4 @@ volumes:
   redisdata: {}
   pgdata: {}
   rabbitmqdata: {}
+  sandbox_image_registry_data: {}
