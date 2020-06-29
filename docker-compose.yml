@@ -283,13 +283,13 @@ services:
         constraints:
           - node.labels.image_builder == true
 
-  sandbox_image_registry:
+  sandboximageregistry:
     image: registry:2
     container_name: ag-sandbox-image-registry
     restart: unless-stopped
 
-    ports:
-      - 5001:5000
+    expose:
+      - "5000"
 
     volumes:
       - sandbox_image_registry_data:/var/lib/registry
