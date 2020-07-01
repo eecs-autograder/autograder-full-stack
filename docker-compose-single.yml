@@ -168,11 +168,6 @@ services:
     volumes:
       - sandbox_image_registry_data:/var/lib/registry
 
-networks:
-  default:
-    external:
-      name: ag-swarm-network
-
 volumes:
   redisdata: {}
   pgdata: {}

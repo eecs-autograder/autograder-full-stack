@@ -34,10 +34,6 @@ up your server.
     fast_grader:
       command: /usr/local/bin/celery -A autograder worker -n fast_submission_grader@%h --loglevel=info -c 1
     ```
-* You may need to create the swarm network that `docker-compose.yml` expects:
-  ```
-  docker network create ag-swarm-network
-  ```
 
 ## Run the Production Stack
 ```
