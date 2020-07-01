@@ -21,6 +21,9 @@ services:
     restart: unless-stopped
     container_name: ag-dev-nginx
     ports:
+      # IMPORTANT: If you change this port (4200), you must also change the port
+      # for the redirect URL in the "location = /api/docs" block
+      # in nginx/development/conf.d/default.conf
       - "4200:80"
     volumes:
       - ./nginx/development/conf.d:/etc/nginx/conf.d
@@ -59,6 +62,17 @@ services:
       # cookie "username=<email>" to set which user you want to
       # authenticate as.
       USE_REAL_AUTH: 'false'
+
+  apidocs:
+    restart: unless-stopped
+    container_name: ag-dev-api-docs
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./autograder-server/schema:/root
+    env_file: ./autograder-server/schema/env
+
+    expose:
+      - "8080"
 
   postgres:
     restart: unless-stopped

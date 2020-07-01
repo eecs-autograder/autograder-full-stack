@@ -71,6 +71,20 @@ services:
         constraints:
           - node.labels.django_app == true
 
+  apidocs:
+    restart: unless-stopped
+    container_name: ag-api-docs
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./autograder-server/schema:/root
+    env_file: ./autograder-server/schema/env
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.webserver == true
+
   postgres:
     container_name: ag-postgres
     image: 127.0.0.1:5000/postgres

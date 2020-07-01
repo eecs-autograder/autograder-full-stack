@@ -53,6 +53,17 @@ services:
     env_file:
       - ./autograder-server/_prod.env
 
+  apidocs:
+    restart: unless-stopped
+    container_name: ag-api-docs
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./autograder-server/schema:/root
+    env_file: ./autograder-server/schema/env
+
+    expose:
+      - "8080"
+
   postgres:
     container_name: ag-postgres
     image: 127.0.0.1:5000/postgres
