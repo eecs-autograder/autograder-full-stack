@@ -125,7 +125,18 @@ Generate the Django secret key and a GPG key pair for signing emails with
 the following command:
 ```
 cd autograder-server
-# This step requires that you first install all the Python packages listed
-# in requirements.txt
-./manage.py generate_secrets
+
+# This step requires Python 3.8.
+# See https://github.com/eecs-autograder/autograder-server#install-python-38
+# for instructions on installing Python 3.8.
+# Also requires Django and python-gnupg (see ./autograder-server/requirements.txt
+# for the version numbers).
+#
+# Note also that this step requires a lot of entropy to generate the GPG keys.
+# Try running commands such as `ls -R / > /dev/null` or downloading a large
+# file while the command below is running. Even so, it can take a long time
+# for the key generation to finish.
+# See https://stackoverflow.com/questions/32941064/gpg-hangs-on-entropy-generation
+# for more on this topic.
+python3 generate_secrets.py
 ```
