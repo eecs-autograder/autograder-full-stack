@@ -79,6 +79,20 @@ To set up Google's authentication, you will need to follow roughly the following
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
  * Update `OAUTH2_SECRETS_FILENAME=oauth2_secrets.json` in ./autograder-server/_prod.env
 
+### Configure SMTP Server
+In order for submission email receipts to work, you must set up an SMTP server
+that all of your servers can access on the network. Uncomment and update the
+following environment variables in ./autograder-server/_prod.env to point to
+your SMTP server:
+
+`EMAIL_HOST`: The hostname for the SMTP server.
+`EMAIL_HOST_PASSWORD`: The password for the SMTP server. Leave commented out if
+there is no password.
+`EMAIL_HOST_USER`: The username for the SMTP server.
+`EMAIL_PORT`: The port for the SMTP server.
+`EMAIL_FROM_ADDR`: The "from" address for submission email receipts. Defaults
+to "admin@autograder.io". Change this to an email address you control.
+
 ### (Optional) Tune Resource-limit Environment Variables
 Depending on how many servers you are using for deployment and the specs of
 those servers, you may wish to adjust the resource limits placed on Docker
@@ -105,3 +119,13 @@ image (limited using ulimit). Defaults to 1000.
 
 `IMAGE_BUILD_TIMEOUT`: The time limit for building a custom image, in seconds.
 Defaults to 600.
+
+## Generate Secrets
+Generate the Django secret key and a GPG key pair for signing emails with
+the following command:
+```
+cd autograder-server
+# This step requires that you first install all the Python packages listed
+# in requirements.txt
+./manage.py generate_secrets
+```
