@@ -8,6 +8,9 @@ x-grader:
     dockerfile: Dockerfile-grader-dev
     context: ./autograder-server
 
+  depends_on:
+    - django
+
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./autograder-server:/usr/src/app
@@ -52,7 +55,7 @@ services:
       - "8001"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: /usr/local/bin/uwsgi --py-autoreload 1 --ini /usr/src/app/uwsgi/uwsgi.ini
+    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
     env_file:
       - ./autograder-server/_dev.env
     environment:
@@ -110,6 +113,10 @@ services:
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-dev
+
+    depends_on:
+      - django
+
     container_name: ag-dev-celery-small-tasks
     volumes:
       - ./autograder-server:/usr/src/app
@@ -122,6 +129,10 @@ services:
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-dev
+
+    depends_on:
+      - django
+
     container_name: ag-dev-celery-project-downloads
     volumes:
       - ./autograder-server:/usr/src/app
@@ -135,6 +146,10 @@ services:
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-dev
+
+    depends_on:
+      - django
+
     env_file:
       - ./autograder-server/_dev.env
     volumes:
