@@ -1,7 +1,7 @@
 [submodule "autograder-server"]
 	path = autograder-server
 	url = ../autograder-server.git
-	branch = release-4.1.1
+	branch = release-4.1.x
 [submodule "ag-website-vue"]
 	path = ag-website-vue
 	url = ../ag-website-vue.git
