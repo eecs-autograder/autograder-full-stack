@@ -66,7 +66,12 @@ Enabling SSL certs requires:
           ...
     ```
 
-### Google Auth
+### Configure an OAuth2 Provider
+Autograder.io currently supports Google and Microsoft Azure as auth providers.
+Set `OAUTH2_PROVIDER=google` or `OAUTH2_PROVIDER=azure` in
+`./autograder-server/_prod.env` to choose your provider.
+
+**Google**
 
 To set up Google's authentication, you will need to follow roughly the following steps:
 
@@ -78,6 +83,32 @@ To set up Google's authentication, you will need to follow roughly the following
  * Download the .json oauth file (far right download arrow)
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
  * Update `OAUTH2_SECRETS_FILENAME=oauth2_secrets.json` in ./autograder-server/_prod.env
+
+**Microsoft Azure**
+
+Detailed instructions for configuring an Active Directory app can be found at
+https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration
+
+You will need to follow roughly the following steps:
+
+* In the Azure portal, create an Azure app.
+* Generate a client secret under the "Certificates & secrets" section.
+* Edit `./autograder_server/autograder/settings/oauth2_secrets.json` to have
+  the following contends, replacing `$CLIENT_ID` with the Azure Application ID,
+  `$SECRET` with the client secret you created in the previous step, and `$DOMAIN`
+  with your deployment domain:
+  ```
+  {
+      "web": {
+        "client_id":"$CLIENT_ID",
+        "auth_uri":"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "token_uri":"https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "client_secret":"$SECRET",
+        "redirect_uris":["https://$DOMAIN/api/oauth2callback/"],
+        "javascript_origins":[]
+      }
+  }
+  ```
 
 ### Configure SMTP Server
 In order for submission email receipts to work, you must set up an SMTP server
