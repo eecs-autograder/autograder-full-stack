@@ -1,7 +1,7 @@
 This repository contains Docker and other configuration files needed to run and deploy the autograder system.
 
 # Versioning
-As of Jan. 2021, we use the following version scheme for release tags in this repo:
+As of Jan. 2021, we use the following version scheme for release tags in this repo (autograder-full-stack):
 ```
 {yyyy}.{mm}.v{X}
 ```
@@ -20,6 +20,33 @@ See [this tutorial](./docs/swarm_deployment.md).
 
 # Single-server Production Setup
 See [this tutorial](./docs/production_non_swarm_setup.md).
+
+# Upgrading (Production Deployments)
+To upgrade from one major version to the next, follow these steps:
+
+1. Pull the `master` branch in the `autograder-full-stack` repo and pull the latest tags.
+    ```
+    cd autograder-full-stack
+    git checkout master
+    git pull
+    git pull --tags
+    ```
+
+2. Checkout the tag for the version you want to upgrade to.
+    ```
+    # Replace {tag} with the appropriate version (e.g. 2021.01.v3)
+    git checkout {tag}
+    ```
+    **Note**: If your deployment is behind by several _major_ versions (the {yyyy}.{mm} portion of the version number), we recommend **upgrading to each intermediate major version sequentially**. This is important to ensure that database migrations run correctly.
+
+3. Update the `autograder-server` and `ag-website-vue` submodules. If you've made changes to the submodules (such as changing config settings), you may need to stash them first and then re-apply. Git will warn you if you need to do so.
+    ```
+    git submodule update --remote
+    ```
+
+4. Re-deploy the docker containers and apply database migrations. This step varies slightly depending on which deployment strategy you're using (e.g., single server, swarm). Please refer to the appropriate tutorial for the specific commands: [swarm](./docs/swarm_deployment.md),
+[single server](./docs/production_non_swarm_setup.md).
+
 
 ## Other Recipes and Things to Know
 ### Useful scripts
