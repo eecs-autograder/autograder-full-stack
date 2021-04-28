@@ -29,6 +29,7 @@ services:
       - /etc/ssl:/etc/ssl
       - ./nginx/production/conf.d:/etc/nginx/conf.d
       - ./autograder-server/static:/www/static
+      - ./autograder-server/media_root:/protected
 
   website:
     image: 127.0.0.1:5000/website
@@ -49,9 +50,13 @@ services:
       dockerfile: Dockerfile-django-prod
     volumes:
       - ./autograder-server/media_root:/usr/src/app/media_root
-    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
+    # UPDATE set --workers=xx to your desired number of workers. Remove the flag
+    # to use gunicorn's default behavior.
+    command: gunicorn --workers=4 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=-
     env_file:
       - ./autograder-server/_prod.env
+    environment:
+      USE_NGINX_X_ACCEL: 'true'
 
   apidocs:
     restart: unless-stopped
