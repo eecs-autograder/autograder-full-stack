@@ -29,8 +29,8 @@ server that you want use as swarm manager.
     command: guicorn --workers=<number of workers> ...
     ...
   ```
-* Update `SYSADMIN_CONTACT` to refer to your system administrator if you are
-  using a custom deployment.
+* Update the value of the `SYSADMIN_CONTACT` variable in `./ag-website-vue/src/constants.ts` to refer
+  to your system administrator.
 * (Optional) increase `client_max_body_size` in `./nginx/production/conf.d/default.conf`.
 * (Optional) In `./autograder-server/autograder/core/constants.py`, tune `MAX_SUBPROCESS_TIMEOUT` to your liking. Set the corresponding values in `./ag-website-vue/src/constants.ts` as well.
 * (Optional) Adjust the number of grader workers in `docker-compose.yml`:

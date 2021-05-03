@@ -5,7 +5,7 @@ deployment. For swarm deployment, follow these instructions for the machine
 you will use as swarm manager.
 
 ## IMPORTANT NOTE: Postgres 9.5 No Longer Supported
-If you are starting a new deployment of Autograder.io, you will need to change the version of Postgres 
+If you are starting a new deployment of Autograder.io, you will need to change the version of Postgres
 from 9.5 to a newer, supported version (13 is the latest major version as of this writing).
 
 In `docker-compose.yml` (for swarm deployment) or `docker-compose-single.yml` (for single-server deployment),
@@ -27,7 +27,7 @@ Docker Compose: https://docs.docker.com/compose/install/
 
 ## Clone the Source Code
 ```
-git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
+git clone --recursive https://github.com/eecs-autograder/autograder-full-stack.git
 cd autograder-full-stack
 ```
 The autograder-server and autograder-website submodules should automatically be set to the correct commit. You do not need to checkout a branch in them.
@@ -59,8 +59,8 @@ The server name is set to `autograder.io` by default.
 Make the following changes to use a non-default server name.
 Please change $SERVER to your server's DNS name. All paths here are relative to `autograder-full-stack`.
 
-  * Update `SITE_DOMAIN=$SERVER` in `./autograder-server/_prod.env`
   * Update `ALLOWED_HOSTS=$SERVER` in `./autograder-server/_prod.env`
+  * Update `SITE_DOMAIN=$SERVER` in `./autograder-server/_prod.env`
   * Update `server_name` in `./nginx/production/conf.d/default.conf` to your server name
 
 ### SSL Certs
