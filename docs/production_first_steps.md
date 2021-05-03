@@ -4,6 +4,19 @@ This document details the required first steps for setting up a production
 deployment. For swarm deployment, follow these instructions for the machine
 you will use as swarm manager.
 
+## IMPORTANT NOTE: Postgres 9.5 No Longer Supported
+If you are starting a new deployment of Autograder.io, you will need to change the version of Postgres 
+from 9.5 to a newer, supported version (13 is the latest major version as of this writing).
+
+In `docker-compose.yml` (for swarm deployment) or `docker-compose-single.yml` (for single-server deployment),
+change the line `image: postgres:9.5` to use your desired version, e.g., `image: postgres:13`:
+```
+postgres:
+  ...
+  image: postgres:<VERSION>
+  ...
+```
+
 ## System Requirements
 **Supported Operating Systems:**
 - Ubuntu 16.04 (18.04 will probably work)
