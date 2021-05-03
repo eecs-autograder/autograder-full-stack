@@ -30,6 +30,7 @@ services:
       - "4200:80"
     volumes:
       - ./nginx/development/conf.d:/etc/nginx/conf.d
+      - ./autograder-server/media_root_dev:/protected
 
   website:
     restart: unless-stopped
@@ -52,13 +53,14 @@ services:
       dockerfile: Dockerfile-django-dev
     container_name: ag-dev-django
     expose:
-      - "8001"
+      - "8000"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: /usr/local/bin/uwsgi --ini /usr/src/app/uwsgi/uwsgi.ini
+    command: gunicorn --reload --workers=1 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=-
     env_file:
       - ./autograder-server/_dev.env
     environment:
+      USE_NGINX_X_ACCEL: 'true'
       # Set to false to disable real authentication. Any other string value
       # will enable real authentication.
       # Then, using a browser plugin such as EditThisCookie, set the

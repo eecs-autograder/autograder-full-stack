@@ -5,8 +5,16 @@ Follow the instructions in [this tutorial](./production_first_steps.md) to set
 up your server.
 
 ## Other Tweaks
-* In `./autograder-server/uwsgi/uwsgi.ini`, adjust `processes` based on how many cpu cores your machine has.
-    * NOTE: For a single-server deployment, you should be conservative with this value.
+* In `docker-compose-single.yml`, adjust the value of the `--workers=xx` flag
+  to set the number of gunicorn workers.
+    * NOTE: For a single-server deployment, you should be conservative with this value or
+      remove the flag to use gunicorn's default behavior.
+  ```
+  django:
+    ...
+    command: guicorn --workers=<number of workers> ...
+    ...
+  ```
 * Update `SYSADMIN_CONTACT` to refer to your system administrator if you are
   using a custom deployment.
 * (Optional) increase `client_max_body_size` in `./nginx/production/conf.d/default.conf`.
