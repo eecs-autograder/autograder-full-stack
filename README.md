@@ -71,22 +71,8 @@ register_project_queues(project_pks=[339])
 ```
 
 ### Submission(s) stuck at "being graded" status
-Sometimes a power bump can prevent grading tasks from finishing. Run the following in a django shell to restart the grading process for a student's submission:
-```
-from autograder.core.models import *
-from django.contrib.auth.models import User
-
-# UPDATE the email address
-student = User.objects.get(username='<email address>')
-# UPDATE the project pk
-stuck = student.groups_is_member_of.get(project=<project_pk>).submissions.filter(status=Submission.GradingStatus.being_graded)
-
-print(len(stuck))  # Should be no more than 1
-
-for submission in stuck:
-  submission.status = Submission.GradingStatus.received
-  submission.save()
-```
+This is now possible through the UI.
+See https://eecs-autograder.github.io/autograder.io/how_tos.html#rerunning-a-stuck-or-errored-submission
 
 ### Creating a Custom API Token
 To create a custom api token, run the following in a django shell:
