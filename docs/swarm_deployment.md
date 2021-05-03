@@ -20,6 +20,40 @@ traffic on ports 80 and 443.
 Follow the instructions in [this tutorial](./production_first_steps.md) for the
 server that you want use as swarm manager.
 
+## Other Tweaks
+* In `docker-compose.yml`, adjust the value of the `--workers=xx` flag
+  to set the number of gunicorn workers.
+  ```
+  django:
+    ...
+    command: guicorn --workers=<number of workers> ...
+    ...
+  ```
+* Update `SYSADMIN_CONTACT` to refer to your system administrator if you are
+  using a custom deployment.
+* (Optional) increase `client_max_body_size` in `./nginx/production/conf.d/default.conf`.
+* (Optional) In `./autograder-server/autograder/core/constants.py`, tune `MAX_SUBPROCESS_TIMEOUT` to your liking. Set the corresponding values in `./ag-website-vue/src/constants.ts` as well.
+* (Optional) Adjust the number of grader workers in `docker-compose.yml`:
+    ```
+    grader:
+      # *** Change the value *** of -c to set the number of workers.
+      # Even with many CPU cores, be conservative with this value.
+      command: /usr/local/bin/celery -A autograder worker -n submission_grader@%h --loglevel=info -c 2
+
+    deferred_grader:
+      # This -c value can be lower than the one for `grader`.
+      # If resources are tight, set to 1 or 2.
+      command: /usr/local/bin/celery -A autograder worker -Q deferred -n deferred@%h --loglevel=info -c 1
+
+    rerun_grader:
+      # This -c value can be lower than the one for `grader`.
+      # If resources are tight, set to 1 or 2.
+      command: /usr/local/bin/celery -A autograder worker -Q rerun -n rerun@%h --loglevel=info -c 1
+
+    fast_grader:
+      command: /usr/local/bin/celery -A autograder worker -n fast_submission_grader@%h --loglevel=info -c 1
+    ```
+
 ## Install Docker Community Edition
 Install Docker on every server you want to have in the swarm.
 
