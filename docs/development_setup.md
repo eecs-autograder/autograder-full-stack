@@ -4,7 +4,7 @@ This tutorial will walk you through installing and running the autograder on you
 
 ## System Requirements
 **Supported Operating Systems:**
-- Ubuntu 16.04 (18.04 will probably work)
+- Ubuntu 16.04 or later
 - OSX 10.11.6 or later
 
 It _might_ be possible to run the development stack on Windows using Docker CE for Windows. If you decide to try this, you're on your own.
@@ -23,7 +23,7 @@ OSX: https://docs.docker.com/docker-for-mac/install/
 ```
 git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
 cd autograder-full-stack
-git checkout master
+git checkout develop
 
 cd autograder-server
 git checkout develop
