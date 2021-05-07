@@ -68,17 +68,6 @@ services:
       # authenticate as.
       USE_REAL_AUTH: 'false'
 
-  apidocs:
-    restart: unless-stopped
-    container_name: ag-dev-api-docs
-    image: swaggerapi/swagger-ui
-    volumes:
-      - ./autograder-server/schema:/root
-    env_file: ./autograder-server/schema/env
-
-    expose:
-      - "8080"
-
   postgres:
     restart: unless-stopped
     image: postgres:9.5
