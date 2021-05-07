@@ -47,10 +47,14 @@ To upgrade from one major version to the next, follow these steps:
 4. Re-deploy the docker containers and apply database migrations. This step varies slightly depending on which deployment strategy you're using (e.g., single server, swarm). Please refer to the appropriate tutorial for the specific commands: [swarm](./docs/swarm_deployment.md),
 [single server](./docs/production_non_swarm_setup.md).
 
+## Website UI Documentation
+Documentation on how to configure projects, test cases, and more through the web interface can be found at
+https://eecs-autograder.github.io/autograder.io/
 
 ## Other Recipes and Things to Know
 ### Useful scripts
-A variety of scripts that use the web API can be found at `https://github.com/eecs-autograder/autograder-contrib` and `https://gitlab.eecs.umich.edu/akamil/autograder-tools`.
+If you want to automate a task using a scripting language, you can use the Python HTTP client found at 
+https://github.com/eecs-autograder/autograder-contrib and some ready-to-use python scripts at https://gitlab.eecs.umich.edu/akamil/autograder-tools.
   * IMPORTANT: Make sure to use the correct URL for your deployment. In the former set of scripts, this is configurable with command-line arguments. In the latter, you may need to modify the source code.
 
 ### Giving a user permission to create courses
