@@ -5,7 +5,6 @@ version: '3.7'
 x-grader:
   &base-grader
 
-  image: 127.0.0.1:5000/grader
   restart: unless-stopped
   build:
     context: ./autograder-server
@@ -19,7 +18,6 @@ x-grader:
 services:
   nginx:
     container_name: ag-nginx
-    image: 127.0.0.1:5000/nginx
     build: ./nginx/production
     restart: unless-stopped
     ports:
@@ -31,7 +29,6 @@ services:
       - ./autograder-server/media_root:/protected
 
   website:
-    image: 127.0.0.1:5000/website
     restart: unless-stopped
     build:
       context: ./ag-website-vue
@@ -42,7 +39,6 @@ services:
 
   django:
     container_name: ag-django
-    image: 127.0.0.1:5000/django
     restart: unless-stopped
     build:
       context: ./autograder-server
@@ -51,7 +47,7 @@ services:
       - ./autograder-server/media_root:/usr/src/app/media_root
     # UPDATE set --workers=xx to your desired number of workers. Remove the flag
     # to use gunicorn's default behavior.
-    command: gunicorn --workers=4 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=-
+    command: gunicorn --workers=4 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=- --timeout 120
     env_file:
       - ./autograder-server/_prod.env
     environment:
@@ -59,7 +55,6 @@ services:
 
   postgres:
     container_name: ag-postgres
-    image: 127.0.0.1:5000/postgres
     restart: unless-stopped
     image: postgres:9.5
     volumes:
@@ -69,7 +64,6 @@ services:
 
   redis:
     container_name: ag-redis
-    image: 127.0.0.1:5000/redis
     restart: unless-stopped
     image: redis:latest
     volumes:
@@ -77,16 +71,14 @@ services:
 
   rabbitmq:
     container_name: ag-rabbitmq
-    image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
-    image: rabbitmq:latest
+    build: ./rabbitmq
     hostname: rabbit
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
 
   celery_small_tasks:
     container_name: ag-celery-small-tasks
-    image: 127.0.0.1:5000/celery_small_tasks
     restart: unless-stopped
     build:
       context: ./autograder-server
@@ -99,7 +91,6 @@ services:
 
   celery_project_downloads:
     container_name: ag-celery-project-downloads
-    image: 127.0.0.1:5000/celery_project_downloads
     restart: unless-stopped
     build:
       context: ./autograder-server
@@ -112,7 +103,6 @@ services:
 
   celerybeat:
     container_name: ag-celerybeat
-    image: 127.0.0.1:5000/celerybeat
     restart: unless-stopped
     build:
       context: ./autograder-server

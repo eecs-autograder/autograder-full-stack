@@ -63,7 +63,7 @@ services:
       - ./autograder-server/media_root:/usr/src/app/media_root
     # UPDATE set --workers=xx to your desired number of workers. Remove the flag
     # to use gunicorn's default behavior.
-    command: gunicorn --workers=4 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=-
+    command: gunicorn --workers=4 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=- --timeout 120
     env_file:
       - ./autograder-server/_prod.env
     environment:
@@ -109,7 +109,7 @@ services:
     container_name: ag-rabbitmq
     image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
-    image: rabbitmq:latest
+    build: ./rabbitmq
     hostname: rabbit
     volumes:
       - rabbitmqdata:/var/lib/rabbitmq
