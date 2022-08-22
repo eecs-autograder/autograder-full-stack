@@ -186,3 +186,17 @@ cd autograder-server
 # for more on this topic.
 python3 generate_secrets.py
 ```
+
+## Lower the maximum log file size
+This change is recommended for at least your server that the Django app is 
+running on. Add the following contents to /etc/docker/daemon.json:
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m",
+    "max-file": "5"
+  }
+}
+```
+
