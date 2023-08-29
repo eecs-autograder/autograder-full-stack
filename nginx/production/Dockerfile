@@ -1,4 +1,4 @@
-FROM nginx:1.13
+FROM nginx:1.25
 
 RUN mkdir -p /etc/nginx/ssl/
 RUN apt-get update --fix-missing
