@@ -111,9 +111,9 @@ docker network create ag-swarm-network --driver overlay
 ```
 
 ## Set Up NFS
-First, clone the source code on one of your servers:
+First, clone the source code on one of your servers (e.g., the swarm manager node):
 ```
-git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
+git clone --recursive https://github.com/eecs-autograder/autograder-full-stack.git
 ```
 
 See https://help.ubuntu.com/lts/serverguide/network-file-system.html for full details.

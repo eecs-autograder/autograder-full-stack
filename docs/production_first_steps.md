@@ -122,6 +122,8 @@ You will need to follow roughly the following steps:
       }
   }
   ```
+* If your application is single-tenant, replace "common" in the above URLs with
+  your tenant name/id.
 
 ### Configure SMTP Server
 In order for submission email receipts to work, you must set up an SMTP server
@@ -186,3 +188,17 @@ cd autograder-server
 # for more on this topic.
 python3 generate_secrets.py
 ```
+
+## Lower the maximum log file size
+This change is recommended for at least your server that the Django app is 
+running on. Add the following contents to /etc/docker/daemon.json:
+```
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m",
+    "max-file": "5"
+  }
+}
+```
+
