@@ -19,11 +19,10 @@ postgres:
 
 ## System Requirements
 **Supported Operating Systems:**
-- Ubuntu 16.04 (18.04 will probably work)
+- Ubuntu 20.04 or newer LTS.
 
-## Install Docker Community Edition and Docker Compose
-Docker CE: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
-Docker Compose: https://docs.docker.com/compose/install/
+## Install Docker
+See https://docs.docker.com/engine/install/ubuntu/ for instructions.
 
 ## Clone the Source Code
 ```
