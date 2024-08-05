@@ -169,7 +169,7 @@ Defaults to 600.
 Generate the Django secret key and a GPG key pair for signing emails.
 First, install the following dependencies on your server (NOT in a docker container).
 1. [GPG](https://gnupg.org/)
-2. Python 3.8 and Pip
+2. Python 3.10 and Pip
 3. Using pip, install [Django](https://www.djangoproject.com/download/) (latest 3.1.x version) and [python-gnupg](https://pypi.org/project/python-gnupg/)
     ```
     pip install Django==3.1 python-gnupg
