@@ -7,10 +7,7 @@ As of Jan. 2021, we use the following version scheme for release tags in this re
 ```
 - `{yyyy}` is the year of the release (e.g. "2021").
 - `{mm}` is the **first month of the term** that the release is for (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
-- `{X}` is a number incremented each time new changes are deployed within the term
-  that the release is for.
-
-Typically, we will make 2-3 major releases each year, corresponding with Fall, Winter, and Spring/Summer terms.
+- `{X}` is the minor version number, incremented for smaller changes.
 
 # Dev Setup
 See [this tutorial](./docs/development_setup.md).
