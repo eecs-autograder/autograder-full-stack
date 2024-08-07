@@ -89,7 +89,6 @@ services:
       - redisdata:/data
 
   rabbitmq:
-    image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
     image: rabbitmq:latest
     container_name: ag-dev-rabbitmq
