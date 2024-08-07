@@ -4,20 +4,12 @@ This tutorial will walk you through installing and running the autograder on you
 
 ## System Requirements
 **Supported Operating Systems:**
-- Ubuntu 16.04 or later
-- OSX 10.11.6 or later
+- Ubuntu 20.04 or later. Running on WSL should work in theory.
 
-It _might_ be possible to run the development stack on Windows using Docker CE for Windows. If you decide to try this, you're on your own.
-
-Environments that will **NOT** work:
-- Linux Subsystem for Windows (Do NOT attempt!)
-- Cygwin (No way)
-- CAEN Linux (Plz no)
+We don't officially support running on OSX, but in theory it should be possible.
 
 ## Install Docker Community Edition
 Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-ce-1
-
-OSX: https://docs.docker.com/docker-for-mac/install/
 
 ## Clone and checkout
 ```
