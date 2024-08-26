@@ -1,6 +1,9 @@
 This repository contains Docker and other configuration files needed to run and deploy the autograder system.
 
 # Announcements
+- Aug 26, 2024: Release 2024.08.v0 is out. See https://github.com/orgs/eecs-autograder/projects/2/views/1 for a list of addressed issues.
+    - Changes to the "Upgrading (Production Deployments)" section of this document regarding upgrade requirements.
+    - autograder-server and ag-website-vue submodules now use calendar versioning.
 
 # Versioning
 As of Jan. 2021, we use the following version scheme for release tags in this repo (autograder-full-stack):
@@ -8,13 +11,15 @@ As of Jan. 2021, we use the following version scheme for release tags in this re
 {yyyy}.{mm}.v{X}
 ```
 - `{yyyy}` is the year of the release (e.g. "2021").
-- `{mm}` is the **first month of the term** that the release is for (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
+- `{mm}` is the month of the release (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
 - `{X}` is the minor version number, incremented for smaller changes (patches, bug fixes) within the same month.
 
 (Written on Aug. 23, 2024): Starting with our next release, we will start using this calendar versioning scheme for
 the autograder-server and ag-website-vue sub-repositories. Note that since npm doesn't allow the "v" in the minor 
-version portion, we will omit it in the package.json file in that repository. ag-client-typescript will continue
-to use semantic versioning.
+version portion, we will omit it in the package.json file in that repository. We will also omit the "v" in 
+autograder-server for symmetry. These version labels will be synchronized (i.e., the submodules will have the same
+version as this repo's release tags) to make it easier to verify that the deployed repos are in sync.
+ag-client-typescript will continue to use semantic versioning.
 
 # Dev Setup
 See [this tutorial](./docs/development_setup.md).
