@@ -1,16 +1,25 @@
 This repository contains Docker and other configuration files needed to run and deploy the autograder system.
 
+# Announcements
+- Aug 26, 2024: Release 2024.08.v0 is out. See https://github.com/orgs/eecs-autograder/projects/2/views/1 for a list of addressed issues.
+    - Changes to the "Upgrading (Production Deployments)" section of this document regarding upgrade requirements.
+    - autograder-server and ag-website-vue submodules now use calendar versioning.
+
 # Versioning
 As of Jan. 2021, we use the following version scheme for release tags in this repo (autograder-full-stack):
 ```
 {yyyy}.{mm}.v{X}
 ```
 - `{yyyy}` is the year of the release (e.g. "2021").
-- `{mm}` is the **first month of the term** that the release is for (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
-- `{X}` is a number incremented each time new changes are deployed within the term
-  that the release is for.
+- `{mm}` is the month of the release (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
+- `{X}` is the minor version number, incremented for smaller changes (patches, bug fixes) within the same month.
 
-Typically, we will make 2-3 major releases each year, corresponding with Fall, Winter, and Spring/Summer terms.
+(Written on Aug. 23, 2024): Starting with our next release, we will start using this calendar versioning scheme for
+the autograder-server and ag-website-vue sub-repositories. Note that since npm doesn't allow the "v" in the minor 
+version portion, we will omit it in the package.json file in that repository. We will also omit the "v" in 
+autograder-server for symmetry. These version labels will be synchronized (i.e., the submodules will have the same
+version as this repo's release tags) to make it easier to verify that the deployed repos are in sync.
+ag-client-typescript will continue to use semantic versioning.
 
 # Dev Setup
 See [this tutorial](./docs/development_setup.md).
@@ -37,14 +46,16 @@ To upgrade from one major version to the next, follow these steps:
     # Replace {tag} with the appropriate version (e.g. 2021.01.v3)
     git checkout {tag}
     ```
-    **Note**: If your deployment is behind by several _major_ versions (the {yyyy}.{mm} portion of the version number), we recommend **upgrading to each intermediate major version sequentially**. This is important to ensure that database migrations run correctly.
+    **Legacy Note**: If your deployment is behind by several _major_ versions (the {yyyy}.{mm} portion of the version number), we recommend **upgrading to each intermediate major version sequentially**. This is important to ensure that database migrations run correctly.
 
-3. Update the `autograder-server` and `ag-website-vue` submodules. If you've made changes to the submodules (such as changing config settings), you may need to stash them first and then re-apply. Git will warn you if you need to do so.
+   **Updated Note**: **Starting with release 2024.08.v0**, we will generally try to make it possible to upgrade from 2024.08.v0 straight to the newest version without upgrading to each intermediate version. If a release requires upgrading from a specific previous version, we will note this requirement in the announcements section of this document.
+
+4. Update the `autograder-server` and `ag-website-vue` submodules. If you've made changes to the submodules (such as changing config settings), you may need to stash them first and then re-apply. Git will warn you if you need to do so.
     ```
     git submodule update --remote
     ```
 
-4. Re-deploy the docker containers and apply database migrations. This step varies slightly depending on which deployment strategy you're using (e.g., single server, swarm). Please refer to the appropriate tutorial for the specific commands: [swarm](./docs/swarm_deployment.md),
+5. Re-deploy the docker containers and apply database migrations. This step varies slightly depending on which deployment strategy you're using (e.g., single server, swarm). Please refer to the appropriate tutorial for the specific commands: [swarm](./docs/swarm_deployment.md),
 [single server](./docs/production_non_swarm_setup.md).
 
 ## Website UI Documentation
