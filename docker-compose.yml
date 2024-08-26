@@ -77,7 +77,6 @@ services:
 
   postgres:
     container_name: ag-postgres
-    image: 127.0.0.1:5000/postgres
     restart: unless-stopped
     image: postgres:9.5
     volumes:
@@ -93,7 +92,6 @@ services:
 
   redis:
     container_name: ag-redis
-    image: 127.0.0.1:5000/redis
     restart: unless-stopped
     image: redis:latest
     volumes:
