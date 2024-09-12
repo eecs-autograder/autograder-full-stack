@@ -12,7 +12,7 @@ As of Jan. 2021, we use the following version scheme for release tags in this re
 ```
 - `{yyyy}` is the year of the release (e.g. "2021").
 - `{mm}` is the month of the release (e.g. 01, 06, 08, 09 for Jan, June, Aug, or Sept).
-- `{X}` is the minor version number, incremented for smaller changes (patches, bug fixes) within the same month.
+- `{X}` is the minor version number, incremented for smaller changes (patches, bug fixes) between major releases.
 
 (Written on Aug. 23, 2024): Starting with our next release, we will start using this calendar versioning scheme for
 the autograder-server and ag-website-vue sub-repositories. Note that since npm doesn't allow the "v" in the minor 
