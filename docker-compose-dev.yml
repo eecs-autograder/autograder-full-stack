@@ -60,6 +60,9 @@ services:
     env_file:
       - ./autograder-server/_dev.env
     environment:
+      # This is checked in the django settings to enable the debug toolbar
+      IS_DEV_SERVER: 'true'
+
       USE_NGINX_X_ACCEL: 'true'
       # Set to false to disable real authentication. Any other string value
       # will enable real authentication.
@@ -89,7 +92,6 @@ services:
       - redisdata:/data
 
   rabbitmq:
-    image: 127.0.0.1:5000/rabbitmq
     restart: unless-stopped
     image: rabbitmq:latest
     container_name: ag-dev-rabbitmq
