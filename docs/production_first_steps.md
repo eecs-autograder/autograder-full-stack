@@ -19,7 +19,7 @@ postgres:
 
 ## System Requirements
 **Supported Operating Systems:**
-- Ubuntu 20.04 or newer LTS.
+- Ubuntu currently supported LTS (22 and 24 at time of writing).
 
 ## Install Docker
 See https://docs.docker.com/engine/install/ubuntu/ for instructions.
@@ -90,7 +90,7 @@ To set up Google's authentication, you will need to follow roughly the following
  * Log into the [Google API Console](https://console.developers.google.com)
  * Create a new project with your correct domain login
  * Enable the People API service for your project
- * Under the "Credientials" tab, add oauth credientials for a web-service.
+ * Under the "Credientials" tab, add (OAuth client ID) credientials for a web application.
  * Add `https://$WEBSITE/api/oauth2callback/` as an 'Authorized rediect URIs'
  * Download the .json oauth file (far right download arrow)
  * Move the .json oauth file to ./autograder-server/autograder/settings/oauth2_secrets.json
@@ -169,10 +169,12 @@ Defaults to 600.
 Generate the Django secret key and a GPG key pair for signing emails.
 First, install the following dependencies on your server (NOT in a docker container).
 1. [GPG](https://gnupg.org/)
-2. Python 3.10 and Pip
+2. Python >= 3.10, pip, venv, and distutils
 3. Using pip, install [Django](https://www.djangoproject.com/download/) (latest 3.1.x version) and [python-gnupg](https://pypi.org/project/python-gnupg/)
     ```
-    pip install Django==3.1 python-gnupg
+    python3 -m venv generate_secrets_venv
+    source generate_secrets_venv/bin/activate
+    pip install Django==3.2 python-gnupg
     ```
 
 Then run `generate_secrets.py`:
@@ -186,6 +188,7 @@ cd autograder-server
 # See https://stackoverflow.com/questions/32941064/gpg-hangs-on-entropy-generation
 # for more on this topic.
 python3 generate_secrets.py
+deactivate
 ```
 
 ## Lower the maximum log file size
