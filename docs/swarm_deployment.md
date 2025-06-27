@@ -128,6 +128,7 @@ the following entry (all one line), replacing {home} with the absolute path to y
     ```
     /{home}/autograder-full-stack    *(rw,sync,no_root_squash,no_subtree_check)
     ```
+    Then run `sudo exportfs -a` or reboot the machine.
 1. Start the NFS server
     ```
     sudo systemctl enable nfs-kernel-server.service
