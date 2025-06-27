@@ -5,7 +5,7 @@ can significantly improve performance and stability.
 This document explains the steps required to do so.
 
 ## Requirements and Recommendations
-- At least 3 servers running Ubuntu 16.04 or 18.04
+- At least 3 servers running a supported Ubuntu LTS (22 or 24 at time of writing)
     - The server(s) hosting high-load parts of the system (e.g. database, webserver)
     should have a healthy amount of RAM and a fast processor.
     - The servers used as tiny grading workers can be small (e.g. a quad-core CPU, 16GB RAM).
