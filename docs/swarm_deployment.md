@@ -144,6 +144,10 @@ the following entry (all one line), replacing {home} with the absolute path to y
     {server}:/{home}/autograder-full-stack /{home}/autograder-full-stack nfs rw,hard,intr 0 0
     ```
     Then, reboot the machine or run `sudo mount -a`.
+1. If it doesn't already exist, create the `media_root` directory:
+   ```
+   mkdir -p $HOME/autograder-full-stack/autograder-server/media_root
+   ```
 
 ## Label the Nodes
 In order to avoid extra config file changes, we will apply labels to our nodes
