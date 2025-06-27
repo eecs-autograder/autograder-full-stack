@@ -214,14 +214,21 @@ docker service ls
 Note: You'll also need to apply database migrations. See the next section for instructions.
 
 ## Finish setting up the database
+First, get the name of the Django container. 
+Run this on the swarm manager:
+```
+echo ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1)
+```
+Substitute that output for the placeholder {django container} in the commands below.
+
 On the node labelled `django_app`, apply the database migrations. You should do this every time you update the source code:
 ```
-docker exec -it ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1) python3 manage.py migrate
+docker exec -it {django container} python3 manage.py migrate
 ```
 
 If this is a new deployment with no existing data, you'll need to create a course and add yourself to it as an admin. Start a Python shell inside the Django container:
 ```
-docker exec -it ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1) python3 manage.py shell
+docker exec -it {django container} python3 manage.py shell
 ```
 In the Python shell, make yourself a superuser, create a course, and add yourself as an administrator:
 ```
