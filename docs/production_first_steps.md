@@ -68,7 +68,7 @@ Enabling SSL certs requires:
   * Create your ssl certs and add them to `/etc/ssl`. We will mount this directory to `/etc/ssl` in the docker container.
   * Edit `ssl_certificate` and `ssl_certificate_key` in  `./nginx/production/conf.d/default.conf` to point to your ssl certs.
     * NOTE: The path to the certs in this file is the path inside the docker container.
-  * (Optional) In `docker-compose.yml`, edit the `volumes` block in the `nginx` service block if your ssl certs aren't in `/etc/ssl`. For example:
+  * (Optional) In the docker compose file you're deploying with, edit the `volumes` block in the `nginx` service block if your ssl certs aren't in `/etc/ssl`. For example:
     ```
     services:
       nginx:
@@ -77,6 +77,9 @@ Enabling SSL certs requires:
           - /host/path/to/certs:/etc/ssl
           ...
     ```
+If you're using Let's Encrypt certs, you'll want to mount the `/etc/letsencrypt` directory rather than `/etc/letsencrypt/live/{domain}` directory because the files in live are symlinks, and their resolved paths need to exist in the mounted volume.
+In the docker compose file, the volume entry would look something like `- /etc/letsencrypt:/etc/letsencrypt`.
+Then, the `ssl_certificate` path in the nginx config would be `/etc/letsencrypt/live/{domain}/fullchain.pem`, and the `ssl_certificate_key` path would be `/etc/letsencrypt/live/{domain}/privkey.pem`.
 
 ### Configure an OAuth2 Provider
 Autograder.io currently supports Google and Microsoft Azure as auth providers.
