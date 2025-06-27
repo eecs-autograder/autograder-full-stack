@@ -170,17 +170,17 @@ Generate the Django secret key and a GPG key pair for signing emails.
 First, install the following dependencies on your server (NOT in a docker container).
 1. [GPG](https://gnupg.org/)
 2. Python >= 3.10, pip, venv, and distutils
-3. Using pip, install [Django](https://www.djangoproject.com/download/) (latest 3.1.x version) and [python-gnupg](https://pypi.org/project/python-gnupg/)
+3. Using pip, install setuptools, [Django](https://www.djangoproject.com/download/) (latest 3.2.x version) and [python-gnupg](https://pypi.org/project/python-gnupg/)
     ```
+    cd autograder-server
     python3 -m venv generate_secrets_venv
     source generate_secrets_venv/bin/activate
+    pip install setuptools
     pip install Django==3.2 python-gnupg
     ```
 
 Then run `generate_secrets.py`:
 ```
-cd autograder-server
-
 # Note also that this step requires a lot of entropy to generate the GPG keys.
 # Try running commands such as `ls -R / > /dev/null` or downloading a large
 # file while the command below is running. Even so, it can take a long time
@@ -189,6 +189,7 @@ cd autograder-server
 # for more on this topic.
 python3 generate_secrets.py
 deactivate
+rm -rf generate_secrets_venv
 ```
 
 ## Lower the maximum log file size
