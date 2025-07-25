@@ -1,0 +1,17 @@
+name: Publish Release
+
+on:
+  push:
+    branches: [ master, develop, release* ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number for release'
+        required: true
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-24.04
+    if: github.event_name == 'workflow_dispatch'
