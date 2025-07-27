@@ -37,10 +37,9 @@ git submodule update --init
 Refer to the sections below on how to checkout specific versions/branches.
 
 ### Latest Version
-The `master` branch (the repo's default branch) is set up to point at the latest version.
-You no not need to take any other steps.
-
-In a future update, we plan to rename `master` to `latest` or some similar change.
+**As of 2025.08.0**: The `master` branch will no longer point to the latest release.
+Instead, each release has its own branch, and the tag `latest` points to the latest release.
+This will make it easier for us to apply patches to multiple release versions when needed.
 
 ### A Specific Release Version
 To checkout a specific release version (identified by *tags* on `release-` branches), run the following in the `autograder-full-stack` directory, replacing `{version}` with the version number (e.g., `2025.08.0`):

@@ -135,10 +135,12 @@ Add the username (`<username>@autograder.io`) to the appropriate roster for your
 # Development & Release Branches: Protocols and Workflow
 This section is intended for developers.
 
-### "master" branch
-The `master` branch points to the latest release.
-**As of 2025.08.0**: Do not make feature/fix PRs against this branch.
-It should only be modified to point to the latest release.
+### Legacy "master" branch
+**As of 2025.08.0**: Each release now has its own branch, and the `master` branch will no longer point to the latest version.
+Instead, the latest release will have the tag `latest`.
+Either checkout the `latest` tag or the release branch for the release you want to use.
+
+Giving each release its own branch will make it easier for us to apply patches to multiple release versions when needed.
 
 ### "develop" branch
 Use feature branches for all changes, and make a pull request against the `develop` branch.
@@ -176,3 +178,4 @@ To create a github release, trigger a `workflow_dispatch` event on the release b
 Pass the version number as input.
 
 CI will tag the release, and create a GitHub release.
+Pass "true" for the "update latest" tag to set the release as the latest version.
