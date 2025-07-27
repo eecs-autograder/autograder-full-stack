@@ -135,5 +135,13 @@ echo "   the branch $release_branch with version $version"
 echo "   Do this under the Actions tab on github. "
 echo "   Wait for CI to finish successfully."
 
+read -p "[Press enter to continue]"
+
+echo "9. Stable releases only: Update the latest tag":
+echo "   git tag latest"
+echo "   git push --tags --force"
+
+read -p "[Press enter to continue]"
+
 echo ""
 echo "That's all!"
