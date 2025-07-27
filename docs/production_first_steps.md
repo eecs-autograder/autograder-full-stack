@@ -41,6 +41,12 @@ Refer to the sections below on how to checkout specific versions/branches.
 Instead, each release has its own branch, and the tag `latest` points to the latest release.
 This will make it easier for us to apply patches to multiple release versions when needed.
 
+To checkout the latest release, run the following:
+```
+git checkout latest
+git submodule update --remote
+```
+
 ### A Specific Release Version
 To checkout a specific release version (identified by *tags* on `release-` branches), run the following in the `autograder-full-stack` directory, replacing `{version}` with the version number (e.g., `2025.08.0`):
 ```
