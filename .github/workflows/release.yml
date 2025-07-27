@@ -1,22 +1,19 @@
 name: Publish Release
 
 on:
-  push:
-    branches: [ develop, release* ]
-  pull_request:
   workflow_dispatch:
     inputs:
       version:
         description: 'Version number for release'
         required: true
+      set_as_latest:
+        description: 'Set to the string "true" to also update the `latest` tag'
+        required: false
 
 jobs:
   create-release:
     name: Create GitHub Release
     runs-on: ubuntu-24.04
-    if: github.event_name == 'workflow_dispatch'
-
-    # needs:
 
     permissions:
       contents: write  # IMPORTANT: mandatory for making GitHub Releases
@@ -24,26 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      # FIXME: checkout submodule version tags, update own gitmodules?
-
-      - name: Commit updated version files
-        run: |
-          git add package.json package-lock.json
-          git commit -m "Version ${{ inputs.version }}"
-          git push --dry-run
-          git tag ${{ inputs.version }}
-          git push --tags --dry-run
-
-      # - name: Create GitHub Release
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #   run: >-
-      #     gh release create
-      #     "${{ inputs.version }}"
-      #     --repo "$GITHUB_REPOSITORY"
-      #     --notes ""
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create
+          "${{ inputs.version }}"
+          --repo "$GITHUB_REPOSITORY"
+          --notes ""
