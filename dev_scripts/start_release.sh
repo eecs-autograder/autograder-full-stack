@@ -67,6 +67,8 @@ echo "       git commit -m \"Update submodule\""
 echo "       git push -u origin $bump_branch"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
 
+read -p "[Press enter to continue]"
+
 echo "4. In the ag-client-typescript repo, trigger a workflow_dispatch event on "
 echo "   the branch $release_branch with version $version"
 echo "   Do this under the Actions tab on github. "
@@ -104,6 +106,8 @@ echo "       git commit -m \"Update submodule\""
 echo "       git push -u origin $bump_branch"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
 
+read -p "[Press enter to continue]"
+
 echo "6. In the ag-website-vue repo, trigger a workflow_dispatch event on "
 echo "   the branch $release_branch with version $version"
 echo "   Do this under the Actions tab on github. "
@@ -140,6 +144,8 @@ echo "       git add .gitmodules ag-website-vue autograder-server"
 echo "       git commit -m \"Update submodule\""
 echo "       git push -u origin $bump_branch"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
+
+read -p "[Press enter to continue]"
 
 echo "8. In the autograder-full-stack repo, trigger a workflow_dispatch event on "
 echo "   the branch $release_branch with version $version"
