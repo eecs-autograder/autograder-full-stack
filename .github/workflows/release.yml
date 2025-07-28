@@ -15,11 +15,45 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-24.04
 
+    if: startsWith(github.ref, 'refs/heads/release')
+
     permissions:
       contents: write  # IMPORTANT: mandatory for making GitHub Releases
 
     steps:
-      - uses: actions/checkout@v3
+      # See https://github.com/organizations/eecs-autograder/settings/apps
+      # and https://github.com/orgs/community/discussions/25305#discussioncomment-8256560
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.VERSION_BUMPER_APPID }}
+          private-key: ${{ secrets.VERSION_BUMPER_SECRET }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
+      - name: Tag the Release
+        run: |
+          git tag
+          git tag ${{ inputs.version }}
+          git push --tags
+
+          if test "${{ inputs.set_as_latest }}" == "true"; then
+            git tag latest
+            git push --tags --force
+          fi
 
       - name: Create GitHub Release
         env:
