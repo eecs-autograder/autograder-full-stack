@@ -64,7 +64,7 @@ echo "       git pull"
 echo "       git submodule update --remote"
 echo "       git add autograder-server"
 echo "       git commit -m \"Update submodule\""
-echo "       git push
+echo "       git push"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
 
 read -p "[Press enter to continue]"
@@ -103,7 +103,7 @@ echo "       git pull"
 echo "       git submodule update --remote"
 echo "       git add ag-client-typescript e2e_test_stack/autograder-server"
 echo "       git commit -m \"Update submodule\""
-echo "       git push
+echo "       git push"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
 
 read -p "[Press enter to continue]"
@@ -142,7 +142,7 @@ echo "       git pull"
 echo "       git submodule update --remote"
 echo "       git add ag-website-vue autograder-server"
 echo "       git commit -m \"Update submodule\""
-echo "       git push
+echo "       git push"
 echo "     - Open a PR for $bump_branch into $release_branch, merge after CI passes"
 
 read -p "[Press enter to continue]"
