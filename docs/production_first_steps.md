@@ -29,15 +29,55 @@ See https://docs.docker.com/engine/install/ubuntu/ for instructions.
 git clone --recursive https://github.com/eecs-autograder/autograder-full-stack.git
 cd autograder-full-stack
 ```
-The autograder-server and autograder-website submodules should automatically be set to the correct commit. You do not need to checkout a branch in them.
-
 If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the `autograder-full-stack` directory:
 ```
 git submodule update --init
 ```
 
+Refer to the sections below on how to checkout specific versions/branches.
+
+### Latest Version
+**As of 2025.08.0**: The `master` branch will no longer point to the latest release.
+Instead, each release has its own branch, and the tag `latest` points to the latest release.
+This will make it easier for us to apply patches to multiple release versions when needed.
+
+To checkout the latest release, run the following:
+```
+git checkout latest
+git submodule update --remote
+```
+
+### A Specific Release Version
+To checkout a specific release version (identified by *tags* on `release-` branches), run the following in the `autograder-full-stack` directory, replacing `{version}` with the version number (e.g., `2025.08.0`):
+```
+git submodule checkout --recurse-submodules {version}
+```
+
+### Development Branches
+For developers wanting to make non-hotfix changes, run the following in the `autograder-full-stack` directory:
+```
+git submodule checkout --recurse-submodules develop
+```
+
 ### Updating the Source Code
-In order to update the to the latest stable release, run this command in the `autograder-full-stack` directory:
+These sections correspond to the sections of the same name under "Clone the Source Code" above.
+
+### Latest Version
+Checkout the `master` branch and run this command in the `autograder-full-stack` directory:
+```
+git pull
+git submodule update --remote
+```
+
+### A Specific Release Version
+```
+git fetch origin
+git pull --tags
+git submodule checkout --recurse-submodules {version}
+```
+
+### Development Branches
+Checkout the `develop` branch and run this command in the `autograder-full-stack` directory:
 ```
 git pull
 git submodule update --remote
@@ -196,7 +236,7 @@ rm -rf generate_secrets_venv
 ```
 
 ## Lower the maximum log file size
-This change is recommended for at least your server that the Django app is 
+This change is recommended for at least your server that the Django app is
 running on. Add the following contents to /etc/docker/daemon.json:
 ```
 {
