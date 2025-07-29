@@ -119,7 +119,7 @@ echo "   Wait for CI to finish successfully."
 
 read -p "[Press enter to continue]"
 
-echo "7. Create a release branch for the ag-website-vue submodule."
+echo "7. Create a release branch for the autograder-full-stack repo."
 echo "   **These steps differ slightly from step 5**"
 echo "  a. If this is a new calendar release:"
 echo "     - Checkout the develop branch and create the release branch:"
