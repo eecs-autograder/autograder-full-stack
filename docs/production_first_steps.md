@@ -26,12 +26,12 @@ See https://docs.docker.com/engine/install/ubuntu/ for instructions.
 
 ## Clone the Source Code
 ```
-git clone --recursive https://github.com/eecs-autograder/autograder-full-stack.git
+git clone --recurse-submodules https://github.com/eecs-autograder/autograder-full-stack.git
 cd autograder-full-stack
 ```
 If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the `autograder-full-stack` directory:
 ```
-git submodule update --init
+git submodule update --init --recursive
 ```
 
 Refer to the sections below on how to checkout specific versions/branches.
@@ -44,44 +44,92 @@ This will make it easier for us to apply patches to multiple release versions wh
 To checkout the latest release, run the following:
 ```
 git checkout latest
-git submodule update --remote
+git submodule update --remote  --recursive
+git submodule foreach --recursive git log --max-count 1
+```
+
+The recursive `git log` command above should print the latest commit from 5 repos.
+If it only prints from 2 repos, run:
+```
+git submodule update --init --recursive
 ```
 
 ### A Specific Release Version
 To checkout a specific release version (identified by *tags* on `release-` branches), run the following in the `autograder-full-stack` directory, replacing `{version}` with the version number (e.g., `2025.08.0`):
 ```
-git submodule checkout --recurse-submodules {version}
+git checkout --recurse-submodules {version}
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
+```
+
+The recursive `git log` command above should print the latest commit from 5 repos.
+If it only prints from 2 repos, run:
+```
+git submodule update --init --recursive
 ```
 
 ### Development Branches
 For developers wanting to make non-hotfix changes, run the following in the `autograder-full-stack` directory:
 ```
-git submodule checkout --recurse-submodules develop
+git checkout --recurse-submodules develop
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
 ```
 
-### Updating the Source Code
+The recursive `git log` command above should print the latest commit from 5 repos.
+If it only prints from 2 repos, run:
+```
+git submodule update --init --recursive
+```
+
+## Updating the Source Code
 These sections correspond to the sections of the same name under "Clone the Source Code" above.
 
 ### Latest Version
-Checkout the `master` branch and run this command in the `autograder-full-stack` directory:
 ```
-git pull
-git submodule update --remote
+git fetch origin
+git fetch --tags
+git checkout latest
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
+```
+
+The recursive `git log` command above should print the latest commit from 5 repos.
+If it only prints from 2 repos, run:
+```
+git submodule update --init --recursive
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
 ```
 
 ### A Specific Release Version
 ```
 git fetch origin
-git pull --tags
-git submodule checkout --recurse-submodules {version}
+git fetch --tags
+git checkout --recurse-submodules {version}
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
 ```
 
-### Development Branches
-Checkout the `develop` branch and run this command in the `autograder-full-stack` directory:
+The recursive `git log` command above should print the latest commit from 5 repos.
+If it only prints from 2 repos, run:
 ```
-git pull
-git submodule update --remote
+git submodule update --init --recursive
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
 ```
+
+### Development Branch
+Before working on an issue specific to autograder-full-stack, make sure that the `develop` branches of all the submodules are up to date.
+```
+git checkout develop
+git submodule foreach --recursive git checkout develop
+git submodule foreach --recursive git pull
+git submodule foreach --recursive git log --max-count 1
+git submodule foreach --recursive git status
+```
+
+If `git status` shows new commits in any of the submodules, update those first, making PRs as necessary.
 
 ## Configuration
 ### Increase the nofile limit on your servers

@@ -160,11 +160,16 @@ echo "   Wait for CI to finish successfully."
 
 read -p "[Press enter to continue]"
 
-echo "9. Stable releases only: Update the latest tag":
-echo "   git tag latest"
-echo "   git push --tags --force"
-
-read -p "[Press enter to continue]"
-
 echo ""
 echo "That's all!"
+echo "To check out the new release by release tag, run the following in the autograder-full-stack directory:"
+echo "  git fetch origin"
+echo "  git checkout $version"
+echo "  git submodule upadate --remote"
+echo "To check out the `latest` tag, run this instead:"
+echo "  git fetch origin"
+echo "  git checkout $version"
+echo "  git submodule upadate --remote"
+echo ""
+echo "To sanity check all the submodules at once:"
+echo "  git submodule foreach --recursive git log --max-count 1"
