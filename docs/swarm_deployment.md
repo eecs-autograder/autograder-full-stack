@@ -113,7 +113,7 @@ docker network create ag-swarm-network --driver overlay
 ## Set Up NFS
 First, clone the source code on one of your servers (e.g., the swarm manager node):
 ```
-git clone --recursive https://github.com/eecs-autograder/autograder-full-stack.git
+git clone --recurse-submodules https://github.com/eecs-autograder/autograder-full-stack.git
 ```
 
 See https://help.ubuntu.com/lts/serverguide/network-file-system.html for full details.
@@ -214,7 +214,7 @@ docker service ls
 Note: You'll also need to apply database migrations. See the next section for instructions.
 
 ## Finish setting up the database
-First, get the name of the Django container. 
+First, get the name of the Django container.
 Run this on the swarm manager:
 ```
 echo ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1)

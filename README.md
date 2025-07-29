@@ -55,9 +55,23 @@ We typically only release updates to the latest calendar version (e.g., `2025.08
 In the case of a critical issue, we may decide to backport certain updates to prior versions.
 
 ### Upgrading to 2025.08.0 or Later
+To upgrade to the latest release, replace `{version}` below with "latest".
+
+To upgrade to a specific release, run the following:
+```
+git fetch origin
+git fetch --tags
+git checkout --recurse-submodules {version}
+git submodule update --remote --recursive
+```
+
+Check that each submodule is pointing at the commit labelled with that version:
+```
+git submodule foreach --recursive git log --max-count 1
+```
 
 ### Upgrading to 2024.08.v0 or Earlier
-To upgrade from one major version to the next, follow these steps:
+To upgrade from one version to the next, follow these steps:
 
 1. Pull the `master` branch in the `autograder-full-stack` repo and pull the latest tags.
     ```

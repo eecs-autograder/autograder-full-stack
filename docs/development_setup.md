@@ -13,20 +13,14 @@ Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-docker-c
 
 ## Clone and checkout
 ```
-git clone --recursive git@github.com:eecs-autograder/autograder-full-stack.git
+git clone --recurse-submodules git@github.com:eecs-autograder/autograder-full-stack.git
 cd autograder-full-stack
-git checkout develop
-
-cd autograder-server
-git checkout develop
-cd ..
-cd ag-website-vue
-git checkout develop
-cd ..
+git checkout --recurse-submodules develop
+git submodule update --remote --recursive
 ```
-If you accidentally left out the `--recursive` flag, you can get the same effect by running this command in the autograder-full-stack directory:
+If you accidentally left out the `--recurse-submodules` flag, you can get the same effect by running this command in the autograder-full-stack directory:
 ```
-git submodule update --init
+git submodule update --init --recursive
 ```
 
 ## Run the development stack
