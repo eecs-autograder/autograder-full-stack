@@ -155,6 +155,8 @@ read -p "[Press enter to continue]"
 
 echo "8. In the autograder-full-stack repo, trigger a workflow_dispatch event on "
 echo "   the branch $release_branch with version $version"
+echo "   If you want to point the \"latest\" tag at this release, pass "
+echo "   \"true\" for the \"update latest tag\" field in the workflow_dispatch form."
 echo "   Do this under the Actions tab on github. "
 echo "   Wait for CI to finish successfully."
 
