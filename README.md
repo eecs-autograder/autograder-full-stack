@@ -99,6 +99,170 @@ To upgrade from one version to the next, follow these steps:
 [single server](./docs/production_non_swarm_setup.md).
 
 # Other Recipes and Things to Know
+## Upgrading Postgres
+Refer to the [Postgres documentation](https://www.postgresql.org/docs/current/upgrading.html) for different possible approaches
+
+Here we outline the steps needed to do a dump and restore upgrade.
+These steps assume we're upgrading to Postgres 14.
+Replace "14" with the version of Postgres you want.
+Replace `${postgres_container}` with the name of the postgres container on your deployment.
+Replace `${new_postgres_container}` with the name of the new postgres service.
+For single-server deployments, the regular and new postgres container names will be `ag-postgres` and `ag-postgres-14`.
+Swarm deployments will need to find the container names with `docker ps`.
+We recommend setting variables with these values to avoid mistakes.
+1. Schedule maintenance downtime.
+1. At the beginning of your maintenance window, stop or pause the django and nginx containers:
+```
+# Use "pause" for swarm deployments. "stop" will work for single-server
+docker pause ${django_container} ${nginx_container}
+```
+1. Make sure there are no submissions being graded. You may also choose to stop/pause your grading worker containers.
+1. Perform a full system backup.
+1. Dump the current database contents:
+```
+docker exec -it ${postgres_container} pg_dump --username=postgres --format=c postgres -f /db_backup
+docker cp ${postgres_container}:/db_backup .
+```
+Store the `db_backup` file somewhere safe.
+1. In your docker compose file, add a new postgres volume for the new version.
+   The example below uses Postgres 14 as an example version.
+```yml
+...
+volumes:
+  ...
+  # old version, keep it as-is
+  pgdata: {}
+  # ADD THIS LINE. Replace "14" with the version of postgres you want to upgrade to
+  pgdata14: {}
+  ...
+```
+1. In your docker compose file, add a new postgres service for the new version.
+```yml
+# The current postgres service. Copy it to create the new service below.
+postgres:
+  ...  # keep these settings as-is
+
+# NEW SERVICE
+# Copy the postgres service settings from above.
+# Replace "14" with the version you want to upgrade to.
+postgres14:
+  # CHANGE THIS to the version you want
+  container_name: ag-postgres-14
+  ...
+  # CHANGE THIS to the version you want
+  image: postgres:14
+  volumes:
+    # VERY IMPORTANT: Change "pgdata" on the left side of the colon to the
+    # name of the volume you created in the previous step.
+    - pgdata14:/var/lib/postgresql/data/
+  ...  # Settings copied from the above service block
+```
+1. Create/start/up the new postgres14 service. DO NOT apply django migrations.
+1. Restore the dumped contents into the NEW postgres service. MAKE SURE YOU RESTORE TO THE CORRECT CONTAINER.
+```
+docker cp db_backup ${new_postgres_container}$:/
+docker exec -i ${new_postgres_container}$ pg_restore --username=postgres --format=c -d postgres /db_backup
+```
+1. In your docker compose file:
+    - Remove the old postgres service.
+    - Rename the new postgres service to `postgres`. DO NOT change any other settings.
+
+Below are snapshots of what the changes to `docker-compose-single.yml` might look like during this process.
+
+Start (your file may have some differences):
+```yml
+postgres:
+  container_name: ag-postgres
+  restart: unless-stopped
+  image: postgres:9.5
+  volumes:
+    - pgdata:/var/lib/postgresql/data/
+  environment:
+    POSTGRES_PASSWORD: 'redacted'
+
+...
+
+volumes:
+  redisdata: {}
+  pgdata: {}
+  rabbitmqdata: {}
+  sandbox_image_registry_data: {}
+```
+
+New volume:
+```yml
+postgres:
+  container_name: ag-postgres
+  restart: unless-stopped
+  image: postgres:9.5
+  volumes:
+    - pgdata:/var/lib/postgresql/data/
+  environment:
+    POSTGRES_PASSWORD: 'redacted'
+
+...
+
+volumes:
+  redisdata: {}
+  pgdata: {}
+  pgdata14: {}  # NEW
+  rabbitmqdata: {}
+  sandbox_image_registry_data: {}
+```
+
+New service:
+```yml
+postgres:
+  container_name: ag-postgres
+  restart: unless-stopped
+  image: postgres:9.5
+  volumes:
+    - pgdata:/var/lib/postgresql/data/
+  environment:
+    POSTGRES_PASSWORD: 'redacted'
+
+postgres14:  # CHANGE
+  container_name: ag-postgres
+  restart: unless-stopped
+  image: postgres:14  # CHANGE
+  volumes:
+    - pgdata14:/var/lib/postgresql/data/
+  environment:
+    POSTGRES_PASSWORD: 'redacted'
+
+...
+
+volumes:
+  redisdata: {}
+  pgdata: {}
+  pgdata14: {}  # NEW
+  rabbitmqdata: {}
+  sandbox_image_registry_data: {}
+```
+
+Remove old service, rename new service:
+```yml
+# old service deleted
+
+postgres:  # RENAMED new service
+  container_name: ag-postgres
+  restart: unless-stopped
+  image: postgres:14
+  volumes:
+    - pgdata14:/var/lib/postgresql/data/
+  environment:
+    POSTGRES_PASSWORD: 'redacted'
+
+...
+
+volumes:
+  redisdata: {}
+  pgdata: {}  # keep this just in case
+  pgdata14: {}  # NEW
+  rabbitmqdata: {}
+  sandbox_image_registry_data: {}
+```
+
 ## Useful scripts
 If you want to automate a task using a scripting language, you can use the Python HTTP client found at
 https://github.com/eecs-autograder/autograder-contrib and some ready-to-use python scripts at https://gitlab.eecs.umich.edu/akamil/autograder-tools.
