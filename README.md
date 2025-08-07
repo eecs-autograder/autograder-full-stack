@@ -352,8 +352,5 @@ Update this file on release branches just before publishing a release.
 If instructions differ across releases, include both, and label which version the instructions apply to.
 
 ### Publishing a release
-To create a github release, trigger a `workflow_dispatch` event on the release branch.
-Pass the version number as input.
-
-CI will tag the release, and create a GitHub release.
-Pass "true" for the "update latest" tag to set the release as the latest version.
+Publishing a new release is a multi-step process.
+Run `./dev_scripts/start_release.sh {version}` and follow the instructions printed.
