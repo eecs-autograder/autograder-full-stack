@@ -160,7 +160,7 @@ postgres14:
 1. Create/start/up the new postgres14 service. DO NOT apply django migrations.
 1. Restore the dumped contents into the NEW postgres service. MAKE SURE YOU RESTORE TO THE CORRECT CONTAINER.
 ```
-docker cp db_backup ${new_postgres_container}$:/
+docker cp db_backup ${new_postgres_container}:/
 docker exec -i ${new_postgres_container}$ pg_restore --username=postgres --format=c -d postgres /db_backup
 ```
 1. In your docker compose file:
