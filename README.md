@@ -70,6 +70,13 @@ Check that each submodule is pointing at the commit labelled with that version:
 git submodule foreach --recursive git log --max-count 1
 ```
 
+If the above command only prints log messages for two submodules, run the following:
+```
+git submodule update --init --recursive
+git submodule update --remote --recursive
+git submodule foreach --recursive git log --max-count 1
+```
+
 ### Upgrading to 2024.08.v0 or Earlier
 To upgrade from one version to the next, follow these steps:
 
@@ -106,9 +113,8 @@ Here we outline the steps needed to do a dump and restore upgrade.
 These steps assume we're upgrading to Postgres 14.
 Replace "14" with the version of Postgres you want.
 Replace `${postgres_container}` with the name of the postgres container on your deployment.
-Replace `${new_postgres_container}` with the name of the new postgres service.
-For single-server deployments, the regular and new postgres container names will be `ag-postgres` and `ag-postgres-14`.
-Swarm deployments will need to find the container names with `docker ps`.
+For single-server deployments, the postgres container name will be `ag-postgres`.
+Swarm deployments will need to find the container name with `docker ps`.
 We recommend setting variables with these values to avoid mistakes.
 1. Schedule maintenance downtime.
 1. At the beginning of your maintenance window, stop or pause the django and nginx containers:
@@ -136,18 +142,11 @@ volumes:
   pgdata14: {}
   ...
 ```
-1. In your docker compose file, add a new postgres service for the new version.
+1. In your docker compose file, edit the postgres service to point at the new volume and to use the desired version.
 ```yml
-# The current postgres service. Copy it to create the new service below.
-postgres:
-  ...  # keep these settings as-is
-
-# NEW SERVICE
-# Copy the postgres service settings from above.
 # Replace "14" with the version you want to upgrade to.
-postgres14:
-  # CHANGE THIS to the version you want
-  container_name: ag-postgres-14
+postgres:
+  # Don't change other settings
   ...
   # CHANGE THIS to the version you want
   image: postgres:14
@@ -157,15 +156,12 @@ postgres14:
     - pgdata14:/var/lib/postgresql/data/
   ...  # Settings copied from the above service block
 ```
-1. Create/start/up the new postgres14 service. DO NOT apply django migrations.
-1. Restore the dumped contents into the NEW postgres service. MAKE SURE YOU RESTORE TO THE CORRECT CONTAINER.
+1. Create/start/up the updated postgres service. DO NOT apply django migrations.
+1. Restore the dumped contents into the updated postgres service. Note for swarm deployments: the name of the postgres container will have changed.
 ```
-docker cp db_backup ${new_postgres_container}$:/
-docker exec -i ${new_postgres_container}$ pg_restore --username=postgres --format=c -d postgres /db_backup
+docker cp db_backup ${postgres_container}:/
+docker exec -i ${postgres_container} pg_restore --username=postgres --format=c -d postgres /db_backup
 ```
-1. In your docker compose file:
-    - Remove the old postgres service.
-    - Rename the new postgres service to `postgres`. DO NOT change any other settings.
 
 Below are snapshots of what the changes to `docker-compose-single.yml` might look like during this process.
 
@@ -210,19 +206,10 @@ volumes:
   sandbox_image_registry_data: {}
 ```
 
-New service:
+Update service:
 ```yml
-postgres:
-  container_name: ag-postgres
-  restart: unless-stopped
-  image: postgres:9.5
-  volumes:
-    - pgdata:/var/lib/postgresql/data/
-  environment:
-    POSTGRES_PASSWORD: 'redacted'
-
-postgres14:  # CHANGE
-  container_name: ag-postgres
+postgres:  # CHANGE
+  container_name: ag-postgres  # DO NOT CHANGE
   restart: unless-stopped
   image: postgres:14  # CHANGE
   volumes:
@@ -235,29 +222,6 @@ postgres14:  # CHANGE
 volumes:
   redisdata: {}
   pgdata: {}
-  pgdata14: {}  # NEW
-  rabbitmqdata: {}
-  sandbox_image_registry_data: {}
-```
-
-Remove old service, rename new service:
-```yml
-# old service deleted
-
-postgres:  # RENAMED new service
-  container_name: ag-postgres
-  restart: unless-stopped
-  image: postgres:14
-  volumes:
-    - pgdata14:/var/lib/postgresql/data/
-  environment:
-    POSTGRES_PASSWORD: 'redacted'
-
-...
-
-volumes:
-  redisdata: {}
-  pgdata: {}  # keep this just in case
   pgdata14: {}  # NEW
   rabbitmqdata: {}
   sandbox_image_registry_data: {}
