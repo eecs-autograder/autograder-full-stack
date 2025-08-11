@@ -2,6 +2,24 @@
 
 This tutorial will walk you through installing and running the autograder on your local machine.
 
+## IMPORTANT: Set Postgres Version
+IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
+The postgres version is no longer hard-coded in the docker compose files.
+Instead, we read it from the file `autograder-full-stack/postgres_version`
+and pass the value as a docker build arg.
+
+If you are updating to 2025.08.0 or starting a new deployment of Autograder.io,
+write the version of postgres you want to `autograder-full-stack/postgres_version`, e.g.:
+```
+echo 14 > postgres_version
+```
+Then, pass this value to docker compose when building the container .
+For example:
+```
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-dev.yml build
+```
+The `compose-dev` shortcut script includes this argument.
+
 ## System Requirements
 **Supported Operating Systems:**
 - Ubuntu 20.04 or later. Running on WSL should work in theory.
