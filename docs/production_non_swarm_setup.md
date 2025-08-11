@@ -45,19 +45,19 @@ up your server.
 
 ## Run the Production Stack
 ```
-docker-compose -f docker-compose-single.yml build
-docker-compose -f docker-compose-single.yml up -d
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml build
+docker compose -f docker-compose-single.yml up -d
 ```
 
 To update the containers:
 ```
-docker-compose -f docker-compose-single.yml stop
-docker-compose -f docker-compose-single.yml build
-docker-compose -f docker-compose-single.yml up -d
+docker compose -f docker-compose-single.yml stop
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml build
+docker compose -f docker-compose-single.yml up -d
 ```
 
 This repo also provides the script `compose-single` as an alias for
-`docker-compose -f docker-compose-single.yml`:
+`AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml`:
 ```
 ./compose-single build
 ./compose-single up -d
