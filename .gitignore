@@ -12,3 +12,4 @@ tags
 .idea
 .vscode
 .mypy_cache
+postgres_version

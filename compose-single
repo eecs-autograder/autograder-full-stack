@@ -1,1 +1,8 @@
-docker-compose -f docker-compose-single.yml $@
+#! /bin/bash
+
+if ! test -f postgres_version; then
+    echo "Please write the version of postgres you want to use to autograder-full-stack/postgres_version"
+    exit 1
+fi
+
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml $@

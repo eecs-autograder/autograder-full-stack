@@ -200,10 +200,10 @@ Run these commands in the `autograder-full-stack` directory of your manager node
 need to rerun these commands every time you update the source code.
 ```
 # Build the images
-docker-compose build
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose build
 
 # Push the images to the registry
-docker-compose push
+docker compose push
 
 # Deploy the stack
 docker stack deploy -c docker-compose.yml ag-stack
@@ -219,16 +219,16 @@ Run this on the swarm manager:
 ```
 echo ag-stack_django.1.$(docker service ps -f 'name=ag-stack_django.1' ag-stack_django -q --no-trunc | head -n1)
 ```
-Substitute that output for the placeholder {django container} in the commands below.
+Substitute that output for the placeholder ${django_container} in the commands below.
 
 On the node labelled `django_app`, apply the database migrations. You should do this every time you update the source code:
 ```
-docker exec -it {django container} python3 manage.py migrate
+docker exec -it ${django_container} python3 manage.py migrate
 ```
 
 If this is a new deployment with no existing data, you'll need to create a course and add yourself to it as an admin. Start a Python shell inside the Django container:
 ```
-docker exec -it {django container} python3 manage.py shell
+docker exec -it ${django_container} python3 manage.py shell
 ```
 In the Python shell, make yourself a superuser, create a course, and add yourself as an administrator:
 ```
