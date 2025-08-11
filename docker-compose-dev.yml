@@ -1,5 +1,3 @@
-version: '3.7'
-
 x-grader:
   &base-grader
 
@@ -73,7 +71,17 @@ services:
 
   postgres:
     restart: unless-stopped
-    image: postgres:9.5
+    # IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
+    # Set the postgres version by writing it to the file
+    # autograder-full-stack/postgres_version.
+    # e.g., `echo 14 > postgres_version`
+    # When building with docker compose, pass this value to docker compose, e.g.:
+    # `AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-dev.yml build`
+    # The `compose-dev` shortcut script includes this argument.
+    build:
+      context: ./postgres
+      args:
+        - AG_POSTGRES_VERSION=${AG_POSTGRES_VERSION}
     container_name: ag-dev-postgres
     expose:
       - "5432"

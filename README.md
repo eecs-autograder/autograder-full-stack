@@ -107,8 +107,24 @@ To upgrade from one version to the next, follow these steps:
 
 # Other Recipes and Things to Know
 ## Upgrading Postgres
-Refer to the [Postgres documentation](https://www.postgresql.org/docs/current/upgrading.html) for different possible approaches
+IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
+The postgres version is no longer hard-coded in the docker compose files.
+Instead, we read it from the file `autograder-full-stack/postgres_version`
+and pass the value as a docker build arg.
 
+If you are updating to 2025.08.0 or starting a new deployment of Autograder.io,
+write the version of postgres you want to `autograder-full-stack/postgres_version`, e.g.:
+```
+echo 14 > postgres_version
+```
+Then, pass this value to docker compose when building the container .
+For example:
+```
+AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml build
+```
+The `compose-single` and `compose-dev` shortcut scripts include this argument.
+
+Refer to the [Postgres documentation](https://www.postgresql.org/docs/current/upgrading.html) for different possible upgrade approaches.
 Here we outline the steps needed to do a dump and restore upgrade.
 These steps assume we're upgrading to Postgres 14.
 Replace "14" with the version of Postgres you want.
@@ -118,44 +134,48 @@ Swarm deployments will need to find the container name with `docker ps`.
 We recommend setting variables with these values to avoid mistakes.
 1. Schedule maintenance downtime.
 1. At the beginning of your maintenance window, stop or pause the django and nginx containers:
-```
-# Use "pause" for swarm deployments. "stop" will work for single-server
-docker pause ${django_container} ${nginx_container}
-```
+    ```
+    # Use "pause" for swarm deployments. "stop" will work for single-server
+    docker pause ${django_container} ${nginx_container}
+    ```
 1. Make sure there are no submissions being graded. You may also choose to stop/pause your grading worker containers.
 1. Perform a full system backup.
 1. Dump the current database contents:
-```
-docker exec -it ${postgres_container} pg_dump --username=postgres --format=c postgres -f /db_backup
-docker cp ${postgres_container}:/db_backup .
-```
-Store the `db_backup` file somewhere safe.
+    ```
+    docker exec -it ${postgres_container} pg_dump --username=postgres --format=c postgres -f /db_backup
+    docker cp ${postgres_container}:/db_backup .
+    ```
+    Store the `db_backup` file somewhere safe.
 1. In your docker compose file, add a new postgres volume for the new version.
    The example below uses Postgres 14 as an example version.
-```yml
-...
-volumes:
-  ...
-  # old version, keep it as-is
-  pgdata: {}
-  # ADD THIS LINE. Replace "14" with the version of postgres you want to upgrade to
-  pgdata14: {}
-  ...
-```
-1. In your docker compose file, edit the postgres service to point at the new volume and to use the desired version.
-```yml
-# Replace "14" with the version you want to upgrade to.
-postgres:
-  # Don't change other settings
-  ...
-  # CHANGE THIS to the version you want
-  image: postgres:14
-  volumes:
-    # VERY IMPORTANT: Change "pgdata" on the left side of the colon to the
-    # name of the volume you created in the previous step.
-    - pgdata14:/var/lib/postgresql/data/
-  ...  # Settings copied from the above service block
-```
+    ```yml
+    ...
+    volumes:
+    ...
+    # old version, keep it as-is
+    pgdata: {}
+    # ADD THIS LINE. Replace "14" with the version of postgres you want to upgrade to
+    pgdata14: {}
+    ...
+    ```
+1. (`2025.08.0` and later). Update the version of postgres in `autograder-full-stack/postgres_version`.
+    ```
+    echo 14 > postgres_version
+    ```
+    - (`2024.08.0` and earlier). In your docker compose file, edit the postgres service to point at the new volume and to use the desired version.
+        ```yml
+        # Replace "14" with the version you want to upgrade to.
+        postgres:
+        # Don't change other settings
+        ...
+        # CHANGE THIS to the version you want
+        image: postgres:14
+        volumes:
+            # VERY IMPORTANT: Change "pgdata" on the left side of the colon to the
+            # name of the volume you created in the previous step.
+            - pgdata14:/var/lib/postgresql/data/
+        ...  # Settings copied from the above service block
+        ```
 1. Create/start/up the updated postgres service. DO NOT apply django migrations.
 1. Restore the dumped contents into the updated postgres service. Note for swarm deployments: the name of the postgres container will have changed.
 ```
@@ -163,6 +183,7 @@ docker cp db_backup ${postgres_container}:/
 docker exec -i ${postgres_container} pg_restore --username=postgres --format=c -d postgres /db_backup
 ```
 
+### (`2024.08.0` and earlier only).
 Below are snapshots of what the changes to `docker-compose-single.yml` might look like during this process.
 
 Start (your file may have some differences):

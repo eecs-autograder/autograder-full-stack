@@ -1,5 +1,3 @@
-version: '3.7'
-
 # This file is intended for multi-server deployment with docker swarm.
 
 x-grader:
@@ -78,7 +76,13 @@ services:
   postgres:
     container_name: ag-postgres
     restart: unless-stopped
-    image: postgres:9.5
+    # IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
+    # Set the postgres version by writing it to the file
+    # autograder-full-stack/postgres_version.
+    # e.g., `echo 14 > postgres_version`
+    # When building with docker compose, pass this value to docker compose, e.g.:
+    # `AG_POSTGRES_VERSION=$(cat postgres_version) docker compose build`
+    build: ./postgres
     volumes:
       - pgdata:/var/lib/postgresql/data/
     environment:
