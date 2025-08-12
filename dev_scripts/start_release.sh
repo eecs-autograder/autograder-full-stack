@@ -168,7 +168,7 @@ echo "To check out the new release by release tag, run the following in the auto
 echo "  git fetch origin"
 echo "  git checkout $version"
 echo "  git submodule upadate --remote"
-echo "To check out the `latest` tag, run this instead:"
+echo "To check out the \"latest\" tag, run this instead:"
 echo "  git fetch origin"
 echo "  git checkout $version"
 echo "  git submodule upadate --remote"

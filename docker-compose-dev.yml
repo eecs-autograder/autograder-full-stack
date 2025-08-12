@@ -30,6 +30,10 @@ services:
       - ./nginx/development/conf.d:/etc/nginx/conf.d
       - ./autograder-server/media_root_dev:/protected
 
+    depends_on:
+      - django
+      - website
+
   website:
     restart: unless-stopped
     build:

@@ -111,18 +111,7 @@ IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
 The postgres version is no longer hard-coded in the docker compose files.
 Instead, we read it from the file `autograder-full-stack/postgres_version`
 and pass the value as a docker build arg.
-
-If you are updating to 2025.08.0 or starting a new deployment of Autograder.io,
-write the version of postgres you want to `autograder-full-stack/postgres_version`, e.g.:
-```
-echo 14 > postgres_version
-```
-Then, pass this value to docker compose when building the container .
-For example:
-```
-AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml build
-```
-The `compose-single` and `compose-dev` shortcut scripts include this argument.
+See the steps below for details.
 
 Refer to the [Postgres documentation](https://www.postgresql.org/docs/current/upgrading.html) for different possible upgrade approaches.
 Here we outline the steps needed to do a dump and restore upgrade.
@@ -176,7 +165,19 @@ We recommend setting variables with these values to avoid mistakes.
             - pgdata14:/var/lib/postgresql/data/
         ...  # Settings copied from the above service block
         ```
-1. Create/start/up the updated postgres service. DO NOT apply django migrations.
+1. Rebulid and re-up the updated postgres service. DO NOT apply django migrations.
+   On a single-server deployment, the following commands will do so:
+   ```
+   AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml build postgres
+   AG_POSTGRES_VERSION=$(cat postgres_version) docker compose -f docker-compose-single.yml up -d postgres
+   ```
+   On swarm deployment, rebuild postgres with the following command,
+   then redeploy the stack:
+   ```
+   AG_POSTGRES_VERSION=$(cat postgres_version) docker compose build
+   docker compose push
+   docker stack deploy -c docker-compose.yml ag-stack
+   ```
 1. Restore the dumped contents into the updated postgres service. Note for swarm deployments: the name of the postgres container will have changed.
 ```
 docker cp db_backup ${postgres_container}:/
