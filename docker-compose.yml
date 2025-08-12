@@ -83,7 +83,10 @@ services:
     # e.g., `echo 14 > postgres_version`
     # When building with docker compose, pass this value to docker compose, e.g.:
     # `AG_POSTGRES_VERSION=$(cat postgres_version) docker compose build`
-    build: ./postgres
+    build:
+      context: ./postgres
+      args:
+        - AG_POSTGRES_VERSION=${AG_POSTGRES_VERSION}
     volumes:
       - pgdata:/var/lib/postgresql/data/
     environment:
