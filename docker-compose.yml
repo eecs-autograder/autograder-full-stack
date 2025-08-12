@@ -76,6 +76,7 @@ services:
   postgres:
     container_name: ag-postgres
     restart: unless-stopped
+    image: 127.0.0.1:5000/postgres
     # IMPORTANT: As of 2025.08.0, postgres 14 or later is required.
     # Set the postgres version by writing it to the file
     # autograder-full-stack/postgres_version.
