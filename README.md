@@ -178,6 +178,8 @@ We recommend setting variables with these values to avoid mistakes.
    docker compose push
    docker stack deploy -c docker-compose.yml ag-stack
    ```
+   This may also unpause/restart your nginx and grader containers.
+   Pause them again.
 1. Restore the dumped contents into the updated postgres service. Note for swarm deployments: the name of the postgres container will have changed.
 ```
 docker cp db_backup ${postgres_container}:/
