@@ -53,7 +53,7 @@ jobs:
           git push --tags
 
           if test "${{ inputs.set_as_latest }}" == "true"; then
-            git tag latest
+            git tag --force latest
             git push --tags --force
           fi
 
