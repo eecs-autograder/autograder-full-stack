@@ -77,6 +77,11 @@ git submodule update --remote --recursive
 git submodule foreach --recursive git log --max-count 1
 ```
 
+Final steps:
+- Rebuild and deploy using the instructions from the [single server](./docs/production_non_swarm_setup.md#run-the-production-stack) or [swarm](./docs/swarm_deployment.md#build-and-deploy-the-stack) production setup guides.
+- Apply database migrations.
+
+
 ### Upgrading to 2024.08.v0 or Earlier
 To upgrade from one version to the next, follow these steps:
 
