@@ -345,3 +345,19 @@ If instructions differ across releases, include both, and label which version th
 ### Publishing a release
 Publishing a new release is a multi-step process.
 Run `./dev_scripts/start_release.sh {version}` and follow the instructions printed.
+
+# Rare/Sneaky Configuration Issues
+## ptrace failures
+If programs are failing with errors similar to "ptrace unavailable," this may be caused by the value of `kernel.yama.ptrace_scope`. 
+We encountered this issue when tracking down failing C++ programs compiled with the `-fsanitize=address -fsanitize=undefined` flags turned on to check for memory leaks in student programs.
+The [kernel documentation](https://docs.kernel.org/admin-guide/LSM/Yama.html) has information about the different `kernel.yama.ptrace_scope` values.
+For our purposes we set it to 1, which allows processes to attach to their descendents with ptrace.
+To check the current value:
+```
+sudo sysctl kernel.yama.ptrace_scope
+```
+To set the value to 1:
+```
+sudo sysctl -w kernel.yama.ptrace_scope=1
+```
+Restarting is NOT required.
