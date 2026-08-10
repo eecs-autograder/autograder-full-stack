@@ -1,3 +1,45 @@
+# Version 2026.08.0 Release Notes
+
+## Changelog
+A full list of issues and pull requests included in this release can be found [here](https://github.com/orgs/eecs-autograder/projects/9).
+
+### User facing changes
+#### Added
+- Added support for custom scoring to the command-line interface
+  (autograder-cli #23)
+- Added support for the new project timezone setting to the command-line
+  interface (autograder-cli #35)
+
+#### Changed
+- Projects now have a single `timezone` setting that is used for all of the
+  project's dates and times. This replaces `submission_limit_reset_timezone`
+  (autograder-server #731)
+
+#### Fixed
+- Fixed a large number of accessibility issues throughout the website,
+  including page structure, keyboard navigation, and screen reader labels
+  (ag-website-vue #537)
+- Fixed a bug where the wrong number of late days would be used for
+  submissions made around a daylight saving time transition. Late day usage
+  is now counted in calendar days in the project's timezone
+  (autograder-server #731)
+- Discarded file names are now quoted in the lists of files that were or will
+  be discarded (ag-website-vue #504)
+- Fixed the label text for a test command's internal admin notes
+  (ag-website-vue #588)
+
+#### Removed
+- Removed the mutation testing hint limit reset timezone setting. Hint limits
+  now reset in the project's timezone (autograder-server #731)
+
+### Dev and sysadmin facing changes
+#### Changed
+- Ported website components to single-file components using the Composition
+  API (ag-website-vue #604)
+- Install the binary distribution of psycopg instead of the pure python
+  version (autograder-server #732)
+- Added a squashed migration for the 2025.08.0 release (autograder-server #726)
+
 # Version 2025.08.1 Release Notes
 
 IMPORTANT: if upgrading to this release from 2024.08 or earlier, follow the
