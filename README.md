@@ -1,10 +1,5 @@
 This repository contains Docker and other configuration files needed to run and deploy the autograder system.
 
-# Announcements
-- Aug 26, 2024: Release 2024.08.v0 is out. See https://github.com/orgs/eecs-autograder/projects/2/views/1 for a list of addressed issues.
-    - Changes to the "Upgrading (Production Deployments)" section of this document regarding upgrade requirements.
-    - autograder-server and ag-website-vue submodules now use calendar versioning.
-
 # Website UI Documentation
 Documentation on how to configure projects, test cases, and more through the web interface can be found at
 https://eecs-autograder.github.io/autograder.io/
