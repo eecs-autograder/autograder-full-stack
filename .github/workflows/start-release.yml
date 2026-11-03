@@ -12,10 +12,6 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-24.04
 
-    permissions:
-      contents: write  # IMPORTANT: mandatory for making GitHub Releases
-      actions: write
-
     steps:
       # Note: Uses a custom github app. Go to
       # https://github.com/organizations/eecs-autograder/settings/apps
