@@ -1,0 +1,48 @@
+name: Start Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number for release'
+        required: true
+
+jobs:
+  full-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write  # IMPORTANT: mandatory for making GitHub Releases
+
+    steps:
+      # See https://github.com/organizations/eecs-autograder/settings/apps
+      # and https://github.com/orgs/community/discussions/25305#discussioncomment-8256560
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.VERSION_BUMPER_APPID }}
+          private-key: ${{ secrets.VERSION_BUMPER_SECRET }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
+      - name: Start the autograder-server release
+        run: |
+          gh workflow run \
+            --repo eecs-autograder/autograder-server \
+            'Full Release' \
+            --raw-field version="${{ inputs.version }}"
+            \ --ref actions/release-flow
