@@ -17,6 +17,12 @@ jobs:
       actions: write
 
     steps:
+      # Note: Uses a custom github app. Go to
+      # https://github.com/organizations/eecs-autograder/settings/apps
+      # to edit it.
+      # Go to https://github.com/organizations/eecs-autograder/settings/installations
+      # to make changes where the app is installed in the organization.
+      #
       # See https://github.com/organizations/eecs-autograder/settings/apps
       # and https://github.com/orgs/community/discussions/25305#discussioncomment-8256560
       - uses: actions/create-github-app-token@v3
