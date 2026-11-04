@@ -48,7 +48,7 @@ jobs:
         id: make-branch
         run: |
           branch=$(./dev_scripts/ci/release_branch_from_version.sh "${{ inputs.version }}")
-          git checkout -b $branch || git checkout $branch
+          git checkout -b $branch --track origin/$branch || git checkout -b $branch || git checkout $branch
           git push -u origin $branch || echo "Remote branch already exists"
           echo "release_branch=$branch" >> "$GITHUB_OUTPUT"
 
