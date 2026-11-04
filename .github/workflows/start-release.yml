@@ -56,4 +56,4 @@ jobs:
             --repo eecs-autograder/autograder-server \
             'Full Release' \
             --raw-field version="${{ inputs.version }}" \
-            --ref "${{ inputs.version }}"
+            --ref develop
